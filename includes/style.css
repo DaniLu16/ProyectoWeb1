@@ -7,6 +7,9 @@
 .login-background { 
     background-image: url('../images/background.jpg');
 }
+.users-background { 
+    background-image: url('../images/background3.jpg');
+}
 
 /* Estilos comunes */
 body { 
@@ -169,4 +172,11 @@ body {
     .form-row {
         flex-direction: column; /* Cambiar a columna en pantallas pequeñas */
     }
+}
+.welcome-message {
+    font-family: 'Arial', sans-serif; /* Reemplaza con la fuente correcta usada en el navbar */
+    font-size: 20px;
+    color: white;
+    font-weight: bold; /* Hace el texto en negrita */
+    margin: -20px 0 0 300px; /* Ajusta el margen superior (negativo para mover hacia arriba) y izquierdo */
 }

@@ -11,48 +11,96 @@ function getConnection() {
     return $connection;
 }
 
-function validarLogin($email, $password) {
-    $conexion = getConnection(); // Cambiado a getConnection()
+function registrarUsuario($nombre, $apellidos, $telefono, $email, $direccion, $pais, $password) {
+    $connection = getConnection();
 
-    // Escapar datos para evitar inyecciones SQL
-    $email = $conexion->real_escape_string($email);
-    $password = $conexion->real_escape_string($password);
+    // Encriptar la contraseña
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    // Consultar el usuario
-    $query = "SELECT * FROM usuarios WHERE email = '$email'";
-    $resultado = $conexion->query($query);
+    // Obtener la fecha y hora actual para último inicio de sesión
+    $ultimo_inicio_sesion = date('Y-m-d H:i:s');
 
-    if ($resultado && $resultado->num_rows === 1) {
-        $usuario = $resultado->fetch_assoc();
+    // Obtener rol_id de la tabla roles
+    $queryRole = "SELECT id FROM roles WHERE tipo = 'amigo'"; // Cambia 'amigo' a 'administrador' si es necesario
+    $resultRole = mysqli_query($connection, $queryRole);
 
-        // Verificar la contraseña
-        if ($usuario['contraseña'] === $password) {
-            // Iniciar sesión
-            session_start();
-            $_SESSION['user_id'] = $usuario['id'];
-            $_SESSION['nombre'] = $usuario['nombre'];
-            $_SESSION['rol_id'] = $usuario['rol_id'];
+    if ($resultRole && mysqli_num_rows($resultRole) > 0) {
+        $rol = mysqli_fetch_assoc($resultRole);
+        $rol_id = $rol['id']; // Asignar el rol_id correspondiente
+    } else {
+        die("Error al obtener el rol: " . mysqli_error($connection));
+    }
 
-            $conexion->close(); // Cerrar conexión aquí
-            return $usuario['rol_id']; // Devolver el rol del usuario
-        } else {
-            $conexion->close(); // Cerrar conexión en caso de contraseña incorrecta
-            return false; // Contraseña incorrecta
+    // Obtener estado_id de la tabla estados (suponiendo que quieres que sea "activo" por defecto)
+    $queryEstado = "SELECT id FROM estado WHERE estado = 'activo'"; // Puedes cambiar esto si es necesario
+    $resultEstado = mysqli_query($connection, $queryEstado);
+
+    if ($resultEstado && mysqli_num_rows($resultEstado) > 0) {
+        $estado = mysqli_fetch_assoc($resultEstado);
+        $estado_id = $estado['id']; // Asignar el estado_id correspondiente
+    } else {
+        die("Error al obtener el estado: " . mysqli_error($connection));
+    }
+
+    $query = "INSERT INTO amigos (nombre, apellidos, telefono, email, direccion, pais, contraseña, rol_id, estado_id, ultimo_inicio_sesion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $stmt = mysqli_prepare($connection, $query);
+
+    // Verificar si la preparación de la consulta fue exitosa
+    if ($stmt === false) {
+        die("Error al preparar la consulta: " . mysqli_error($connection));
+    }
+
+    mysqli_stmt_bind_param($stmt, 'sssssssiis', $nombre, $apellidos, $telefono, $email, $direccion, $pais, $hashedPassword, $rol_id, $estado_id, $ultimo_inicio_sesion);
+
+    if (mysqli_stmt_execute($stmt)) {
+        echo "Usuario registrado con éxito.";
+    } else {
+        echo "Error al registrar usuario: " . mysqli_error($connection);
+    }
+
+    mysqli_stmt_close($stmt);
+    mysqli_close($connection);
+}
+
+function loginUsuario($email, $password) {
+    $connection = getConnection();
+
+    // Preparar la consulta para obtener el usuario por email
+    $query = "SELECT id, nombre, rol_id, contraseña FROM amigos WHERE email = ?";
+    $stmt = mysqli_prepare($connection, $query);
+
+    // Verificar si la preparación de la consulta fue exitosa
+    if ($stmt === false) {
+        die("Error al preparar la consulta: " . mysqli_error($connection));
+    }
+
+    mysqli_stmt_bind_param($stmt, 's', $email);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_bind_result($stmt, $id, $nombre, $rol_id, $hashedPassword);
+    mysqli_stmt_fetch($stmt);
+
+    // Verificar la contraseña
+    if (password_verify($password, $hashedPassword)) {
+        // Iniciar sesión
+        session_start();
+        $_SESSION['user_id'] = $id;
+        $_SESSION['user_name'] = $nombre;
+        $_SESSION['rol_id'] = $rol_id;
+
+        // Redireccionar según el rol
+        if ($rol_id == 1) {
+            header("Location: admin.php"); // Cambia esto a la página del administrador
+        } elseif ($rol_id == 2) {
+            header("Location: amigo.php"); // Cambia esto a la página del amigo
         }
+        exit();
     } else {
-        $conexion->close(); // Cerrar conexión si no se encontró el usuario
-        return false; // Usuario no encontrado
+        echo "Credenciales incorrectas.";
     }
-}
 
-function mostrarMensajeBienvenida($rol_id) {
-    if ($rol_id == 1) { // Suponiendo que 1 es el rol de administrador
-        return "Bienvenido Administrador";
-    } else {
-        return "Bienvenido Amigo";
-    }
+    mysqli_stmt_close($stmt);
+    mysqli_close($connection);
 }
-
 // Función para generar el script del modal
 function renderModalScript($error_msg = '') {
     ?>
@@ -60,8 +108,12 @@ function renderModalScript($error_msg = '') {
         // Función para abrir el modal
         function openModal() {
             const modal = document.getElementById("loginModal");
+            const loginForm = document.getElementById("loginForm"); // Obtiene el formulario
             if (modal) {
                 modal.style.display = "block";
+                if (loginForm) {
+                    loginForm.reset(); // Limpiar los campos del formulario
+                }
             }
         }
 
@@ -77,7 +129,7 @@ function renderModalScript($error_msg = '') {
         window.onclick = function(event) {
             const modal = document.getElementById("loginModal");
             if (event.target === modal) {
-                modal.style.display = "none";
+                closeModal();
             }
         };
 
@@ -90,4 +142,26 @@ function renderModalScript($error_msg = '') {
     </script>
     <?php
 }
+
+
+// Función para cargar los países desde la API
+function cargarPaises() {
+    ?>
+    <script>
+        fetch('https://restcountries.com/v3.1/all')
+            .then(response => response.json())
+            .then(data => {
+                const paisSelect = document.getElementById('pais');
+                data.forEach(country => {
+                    const option = document.createElement('option');
+                    option.value = country.name.common;
+                    option.textContent = country.name.common;
+                    paisSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error al cargar países:', error));
+    </script>
+    <?php
+}
+
 ?>

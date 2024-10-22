@@ -1,4 +1,5 @@
-<?php require('includes/header.php'); ?>
+<?php require('includes/header.php'); 
+      require('funciones.php'); ?>
 
 <body class="signup-background">
     <div class="signup-container">
@@ -59,21 +60,7 @@
         </div> 
     </div>
 
-    <script>
-        // Cargar países desde la API
-        fetch('https://restcountries.com/v3.1/all')
-            .then(response => response.json())
-            .then(data => {
-                const paisSelect = document.getElementById('pais');
-                data.forEach(country => {
-                    const option = document.createElement('option');
-                    option.value = country.name.common; 
-                    option.textContent = country.name.common;
-                    paisSelect.appendChild(option);
-                });
-            })
-            .catch(error => console.error('Error al cargar países:', error));
-    </script>
-
+    
+    <?php cargarPaises(); ?>
     <?php require('includes/footer.php'); ?>
 </body>

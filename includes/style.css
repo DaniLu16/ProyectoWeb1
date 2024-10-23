@@ -252,3 +252,103 @@ body {
     background-color: #ddd;
     color: #17492a;
 }
+#content-container { 
+    max-width: 1200px; /* Ajustar el ancho máximo del contenedor para permitir más espacio */
+    margin: 100px auto; /* Centrando el contenedor en la parte superior, puedes cambiarlo a 100px 0 para centrarlo verticalmente */
+    padding: 0; /* Espaciado interno */
+    background-color: #ffffff; /* Fondo blanco */
+    /* border: 1px solid #ccc; */ /* Borde eliminado */
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra para dar profundidad */
+    overflow-x: auto; /* Permitir desplazamiento horizontal si es necesario */
+    position: relative; /* Hacer que el contenedor tenga un contexto de posicionamiento */
+    left: 87%; /* Mover el contenedor totalmente a la derecha */
+    transform: translateX(-100%); /* Ajustar el contenedor a la izquierda para que se alinee completamente al lado derecho */
+}
+
+.table {
+    width: 100%; /* Asegúrate de que la tabla ocupe todo el ancho del contenedor */
+    margin: 0; /* Elimina márgenes adicionales */
+    border-collapse: collapse; /* Colapsar bordes */
+    background-color: #ffffff; /* Fondo blanco */
+    table-layout: auto; /* Permitir que el navegador ajuste el ancho de las columnas */
+}
+
+.table th, .table td {
+    padding: 10px; /* Aumentando el espaciado interno para mejorar la legibilidad */
+    text-align: left; /* Alinear texto a la izquierda */
+    border: 1px solid #dddddd; /* Borde ligero */
+    font-size: 14px; /* Aumentando el tamaño de fuente */
+}
+
+/* Ajustes específicos para columnas */
+.table th:nth-child(1), .table td:nth-child(1) {
+    width: 70px; /* Ajustar el ancho de la columna ID */
+}
+
+.table th:nth-child(2), .table td:nth-child(2) {
+    width: 150px; /* Ajustar el ancho de la siguiente columna */
+}
+
+.table th:nth-child(3), .table td:nth-child(3) {
+    width: 100px; /* Ajustar el ancho de otra columna */
+}
+
+.table th:nth-child(4), .table td:nth-child(4) {
+    width: 150px; /* Ancho de la columna de acciones */
+}
+
+/* Agregar más ajustes de ancho para otras columnas según sea necesario */
+
+.table th {
+    background-color: #0b4e32; /* Color del encabezado */
+    color: white; /* Color del texto del encabezado */
+    font-weight: bold; /* Negrita para el encabezado */
+}
+
+.table tr:nth-child(even) {
+    background-color: #f2f2f2; /* Color de filas pares */
+}
+
+.table tr:hover {
+    background-color: #f1f1f18f; /* Color de fila al pasar el ratón */
+}
+.action-btn {
+    color: white; /* Color del texto */
+    border: none; /* Sin borde */
+    border-radius: 8px; /* Bordes redondeados */
+    padding: 8px 12px; /* Espaciado interno */
+    cursor: pointer; /* Cambiar el cursor al pasar el ratón */
+    transition: background-color 0.3s, transform 0.3s; /* Transiciones suaves */
+    font-size: 14px; /* Tamaño de fuente */
+    text-decoration: none; /* Sin subrayado */
+    display: inline-block; /* Asegurar que el botón respete el ancho y alto */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para dar profundidad */
+    margin-right: 10px; /* Espaciado entre botones */
+    vertical-align: middle; /* Alinear verticalmente los botones */
+}
+
+/* Eliminar el margen derecho del último botón */
+.action-btn:last-child {
+    margin-right: 0; /* Sin margen derecho en el último botón */
+}
+
+/* Botón de editar */
+.edit-btn {
+    background-color: #FFC107; /* Color de fondo amarillo */
+}
+
+.edit-btn:hover {
+    background-color: #e0a800; /* Color más oscuro al pasar el ratón */
+    transform: translateY(-2px); /* Efecto de elevación */
+}
+
+/* Botón de eliminar */
+.delete-btn {
+    background-color: #DC3545; /* Color de fondo rojo */
+}
+
+.delete-btn:hover {
+    background-color: #c82333; /* Color más oscuro al pasar el ratón */
+    transform: translateY(-2px); /* Efecto de elevación */
+}

@@ -62,6 +62,35 @@ function registrarUsuario($nombre, $apellidos, $telefono, $email, $direccion, $p
     mysqli_close($connection);
 }
 
+function cargarUsuarios() {
+    // Establecer conexión a la base de datos
+    $connection = getConnection();
+
+    // Consulta para obtener todos los usuarios de la tabla amigos
+    $query = "SELECT id, nombre, apellidos, telefono, email, direccion, pais, rol_id, estado_id, ultimo_inicio_sesion FROM amigos";
+    $result = mysqli_query($connection, $query);
+
+    // Verificar si la consulta fue exitosa
+    if (!$result) {
+        die("Error al cargar usuarios: " . mysqli_error($connection));
+    }
+
+    // Crear un array para almacenar los usuarios
+    $usuarios = [];
+
+    // Recorrer los resultados y agregar cada usuario al array
+    while ($usuario = mysqli_fetch_assoc($result)) {
+        $usuarios[] = $usuario;
+    }
+
+    // Cerrar la conexión
+    mysqli_close($connection);
+
+    // Retornar el array de usuarios
+    return $usuarios;
+}
+
+
 function loginUsuario($email, $password) {
     $connection = getConnection();
 

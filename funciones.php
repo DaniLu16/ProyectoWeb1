@@ -89,6 +89,33 @@ function cargarUsuarios() {
     // Retornar el array de usuarios
     return $usuarios;
 }
+function editarUsuario($id, $nombre, $apellidos, $telefono, $email, $direccion, $pais, $estado_id, $rol_id) {
+    // Conectar a la base de datos
+    $conn = new mysqli("localhost", "usuario_db", "contraseña_db", "nombre_db");
+
+    // Verificar la conexión
+    if ($conn->connect_error) {
+        die("Conexión fallida: " . $conn->connect_error);
+    }
+
+    // Preparar la consulta SQL
+    $sql = "UPDATE usuario SET nombre=?, apellidos=?, telefono=?, email=?, direccion=?, pais=?, estado_id=?, rol_id=? WHERE id=?";
+    $stmt = $conn->prepare($sql);
+
+    // Bind de los parámetros
+    $stmt->bind_param("sssssiiii", $nombre, $apellidos, $telefono, $email, $direccion, $pais, $estado_id, $rol_id, $id);
+
+    // Ejecutar la consulta
+    if ($stmt->execute()) {
+        return true; // Retorna true si la actualización fue exitosa
+    } else {
+        return false; // Retorna false si hubo un error
+    }
+
+    // Cerrar la conexión
+    $stmt->close();
+    $conn->close();
+}
 
 
 function loginUsuario($email, $password) {
@@ -193,4 +220,47 @@ function cargarPaises() {
     <?php
 }
 
+
+
+function obtenerOpciones($tipo) {
+    // Inicializar un array para almacenar las opciones
+    $opciones = [];
+    $connection = getConnection();
+
+    // Preparar la consulta SQL para obtener los nombres comerciales o científicos
+    $sql = "SELECT $tipo FROM tipos_arboles";
+    $result = mysqli_query($connection, $sql);
+
+    // Verificar si hay resultados y agregar las opciones al array
+    if ($result && mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $opciones[] = $row[$tipo];
+        }
+    }
+
+    mysqli_close($connection);
+    return $opciones;
+}
+
+// Registrar árbol en la base de datos
+function registrarArbol($nombreComercial, $nombreCientifico) {
+    $connection = getConnection();
+    $query = "INSERT INTO arboles_nuevos (nombre_comercial, nombre_cientifico) VALUES (?, ?)";
+    $stmt = mysqli_prepare($connection, $query);
+
+    if ($stmt) {
+        mysqli_stmt_bind_param($stmt, 'ss', $nombreComercial, $nombreCientifico);
+        if (mysqli_stmt_execute($stmt)) {
+            echo "Árbol registrado con éxito.";
+        } else {
+            echo "Error al registrar el árbol: " . mysqli_error($connection);
+        }
+        mysqli_stmt_close($stmt);
+    } else {
+        echo "Error al preparar la consulta: " . mysqli_error($connection);
+    }
+    mysqli_close($connection);
+}
 ?>
+?>
+<?php

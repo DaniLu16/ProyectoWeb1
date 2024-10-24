@@ -1,7 +1,7 @@
 <body class="signup-background">
 <?php
 session_start(); // Asegúrate de iniciar la sesión
-require('includes/header_us.php'); 
+require('includes/header.php');
 
 // Verificar si el usuario ha iniciado sesión
 if (isset($_SESSION['user_name'])) {

@@ -1,6 +1,5 @@
-<?php 
+<?php  
 include('../funciones.php');
-require('../includes/header_us.php');
 
 // Obtener la conexión a la base de datos
 $connection = getConnection();
@@ -16,6 +15,14 @@ if (!$result) {
 ?>
 
 <div class="container mt-5">
+
+    <!-- Mostrar mensaje si está presente en la URL -->
+    <?php if (isset($_GET['msg'])): ?>
+        <div class="alert alert-success" role="alert">
+            <?php echo htmlspecialchars($_GET['msg']); ?>
+        </div>
+    <?php endif; ?>
+
     <table class="table table-striped table-bordered">
         <thead class="thead-dark">
             <tr>
@@ -46,13 +53,10 @@ if (!$result) {
                     <td><?php echo htmlspecialchars($usuario['estado_id']); ?></td>
                     <td><?php echo htmlspecialchars($usuario['ultimo_inicio_sesion']); ?></td>
                     <td style="white-space: nowrap;"> <!-- Evita que los botones se envuelvan en varias líneas -->
-    <!-- Botón de editar -->
-    <a href="update.php?id=<?php echo htmlspecialchars($usuario['id']); ?>" class="action-btn edit-btn">Editar</a>
-    
-    <!-- Botón de eliminar -->
-    <a href="delete.php?id=<?php echo htmlspecialchars($usuario['id']); ?>" class="action-btn delete-btn" onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario?');">Eliminar</a>
-</td>
-
+                        <div id="content-container"></div>
+                        <a href="#" class="action-btn edit-btn" onclick="loadContent('administrador/eddit_user.php?id=<?php echo htmlspecialchars($usuario['id']); ?>')">Editar</a>
+                        <a href="administrador/delete_user.php?id=<?php echo htmlspecialchars($usuario['id']); ?>" class="action-btn delete-btn" onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario?');">Eliminar</a>
+                    </td>
                 </tr>
             <?php endwhile; ?>
         </tbody>
@@ -61,5 +65,4 @@ if (!$result) {
 
 <?php 
 mysqli_close($connection);
-
 ?>

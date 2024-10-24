@@ -4,18 +4,5 @@
   
 </head>
 <body>
-  <!-- Nav tabs -->
-  <ul class="nav nav-tabs" id="navId">
-    
-    <li class="nav-item">
-      <a href="signUp.php" class="nav-link">Signup</a>
-    </li>
-    <li class="nav-item">
-      <a href="index.php" class="nav-link">Login</a>
-    </li>
-    <li class="nav-item">
-      <a href="index.php" class="nav-link">Logout</a>
-    </li>
-  </ul>
  
  

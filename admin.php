@@ -28,7 +28,7 @@ if (isset($_SESSION['user_name'])) {
             <ul class="submenu">
                 <li><a href="#" onclick="loadContent(\'administrar_arboles.php\')">Ver Árboles por Amigo</a></li>
                 <li><a href="#" onclick="loadContent(\'editar_arboles_amigo.php\')">Administrar los Árboles de un Amigo</a></li>
-                <li><a href="#" onclick="loadContent(\'administrador/adm_usuarios.php\')">Administrar Amigos</a></li>
+                <li><a href="#" onclick="loadContent(\'administrador/adm_user.php\')">Administrar Amigos</a></li>
             </ul>
           </li>';
 
@@ -36,7 +36,7 @@ if (isset($_SESSION['user_name'])) {
     echo '<li class="dropdown">
             <a href="#" onclick="toggleMenu(event)">Árboles</a>
             <ul class="submenu">
-                <li><a href="#" onclick="loadContent(\'administrar_arboles.php\')">Nuevo árbol</a></li>
+                <li><a href="#" onclick="loadContent(\'administrador/regis_trees.php\')">Nuevo árbol</a></li>
                 <li><a href="#" onclick="loadContent(\'administrar_arboles.php\')">Administrar Árboles</a></li>
             </ul>
           </li>';

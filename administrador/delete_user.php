@@ -1,4 +1,4 @@
-<?php
+<?php 
 include('../funciones.php');
 
 // Obtener la conexión a la base de datos
@@ -17,8 +17,9 @@ $stmt = mysqli_prepare($connection, $sql);
 mysqli_stmt_bind_param($stmt, 'i', $id);
 
 if (mysqli_stmt_execute($stmt)) {
-    header('Location: lista_usuarios.php?msg=Usuario eliminado correctamente');
-    exit;
+    // Redirigir a la página adm_user.php después de eliminar
+    header("Location: adm_user.php");
+    exit(); // Asegura que el script se detenga aquí
 } else {
     echo "Error al eliminar: " . mysqli_error($connection);
 }

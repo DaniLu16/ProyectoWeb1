@@ -90,32 +90,47 @@ function cargarUsuarios() {
     return $usuarios;
 }
 function editarUsuario($id, $nombre, $apellidos, $telefono, $email, $direccion, $pais, $estado_id, $rol_id) {
-    // Conectar a la base de datos
-    $conn = new mysqli("localhost", "usuario_db", "contraseña_db", "nombre_db");
+    // Establecer conexión a la base de datos
+    $connection = getConnection();
 
-    // Verificar la conexión
-    if ($conn->connect_error) {
-        die("Conexión fallida: " . $conn->connect_error);
+    // Verificar si la conexión es válida
+    if ($connection->connect_error) {
+        die("Error de conexión: " . $connection->connect_error);
     }
 
-    // Preparar la consulta SQL
-    $sql = "UPDATE usuario SET nombre=?, apellidos=?, telefono=?, email=?, direccion=?, pais=?, estado_id=?, rol_id=? WHERE id=?";
-    $stmt = $conn->prepare($sql);
+    // Preparar la consulta SQL de actualización
+    $sql = "UPDATE amigos 
+            SET nombre = ?, apellidos = ?, telefono = ?, email = ?, direccion = ?, pais = ?, estado_id = ?, rol_id = ? 
+            WHERE id = ?";
+    
+    $stmt = $connection->prepare($sql);
 
-    // Bind de los parámetros
-    $stmt->bind_param("sssssiiii", $nombre, $apellidos, $telefono, $email, $direccion, $pais, $estado_id, $rol_id, $id);
+    // Verificar si la preparación fue exitosa
+    if ($stmt === false) {
+        die("Error en la preparación de la consulta: " . $connection->error);
+    }
 
-    // Ejecutar la consulta
+    // Vincular los parámetros a la consulta SQL
+    if (!$stmt->bind_param("sssssissi", $nombre, $apellidos, $telefono, $email, $direccion, $pais, $estado_id, $rol_id, $id)) {
+        die("Error al vincular parámetros: " . $stmt->error);
+    }
+
+    // Ejecutar la consulta y manejar el resultado
     if ($stmt->execute()) {
-        return true; // Retorna true si la actualización fue exitosa
+        echo "Usuario actualizado con éxito.";
     } else {
-        return false; // Retorna false si hubo un error
+        echo "Error al actualizar el usuario: " . $stmt->error;
     }
 
-    // Cerrar la conexión
+    // Cerrar la sentencia preparada
     $stmt->close();
-    $conn->close();
+    
+    // Cerrar la conexión
+    $connection->close();
+
+    return $stmt->affected_rows > 0; // Devuelve verdadero si se actualizó al menos un registro
 }
+
 
 
 function loginUsuario($email, $password) {

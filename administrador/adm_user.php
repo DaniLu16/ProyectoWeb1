@@ -53,10 +53,17 @@ if (!$result) {
                     <td><?php echo htmlspecialchars($usuario['estado_id']); ?></td>
                     <td><?php echo htmlspecialchars($usuario['ultimo_inicio_sesion']); ?></td>
                     <td style="white-space: nowrap;"> <!-- Evita que los botones se envuelvan en varias líneas -->
-                        <div id="content-container"></div>
-                        <a href="#" class="action-btn edit-btn" onclick="loadContent('administrador/eddit_user.php?id=<?php echo htmlspecialchars($usuario['id']); ?>')">Editar</a>
-                        <a href="administrador/delete_user.php?id=<?php echo htmlspecialchars($usuario['id']); ?>" class="action-btn delete-btn" onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario?');">Eliminar</a>
-                    </td>
+    <a href="#" class="action-btn edit-btn" 
+       onclick="loadContent('administrador/eddit_user.php?id=<?php echo htmlspecialchars($usuario['id']); ?>'); return false;">
+       Editar
+    </a>
+    <a href="#" class="action-btn delete-btn" 
+       onclick="loadContent('administrador/delete_user.php?id=<?php echo htmlspecialchars($usuario['id']); ?>'); return false;">
+       Eliminar
+    </a>
+</td>
+
+
                 </tr>
             <?php endwhile; ?>
         </tbody>

@@ -37,7 +37,7 @@ if (isset($_SESSION['user_name'])) {
             <a href="#" onclick="toggleMenu(event)">Árboles</a>
             <ul class="submenu">
                 <li><a href="#" onclick="loadContent(\'administrador/regis_trees.php\')">Nuevo árbol</a></li>
-                <li><a href="#" onclick="loadContent(\'administrar_arboles.php\')">Administrar Árboles</a></li>
+                <li><a href="#" onclick="loadContent(\'administrador/adm_trees.php\')">Administrar Árboles</a></li>
             </ul>
           </li>';
     echo '</ul>';

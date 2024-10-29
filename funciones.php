@@ -90,46 +90,41 @@ function cargarUsuarios() {
     return $usuarios;
 }
 function editarUsuario($id, $nombre, $apellidos, $telefono, $email, $direccion, $pais, $estado_id, $rol_id) {
-    // Establecer conexión a la base de datos
-    $connection = getConnection();
+    $connection = getConnection(); // Conexión a la base de datos
 
-    // Verificar si la conexión es válida
-    if ($connection->connect_error) {
-        die("Error de conexión: " . $connection->connect_error);
-    }
-
-    // Preparar la consulta SQL de actualización
-    $sql = "UPDATE amigos 
-            SET nombre = ?, apellidos = ?, telefono = ?, email = ?, direccion = ?, pais = ?, estado_id = ?, rol_id = ? 
+    $sql = "UPDATE amigos SET 
+                nombre = ?, 
+                apellidos = ?, 
+                telefono = ?, 
+                email = ?, 
+                direccion = ?, 
+                pais = ?, 
+                estado_id = ?, 
+                rol_id = ? 
             WHERE id = ?";
-    
-    $stmt = $connection->prepare($sql);
 
-    // Verificar si la preparación fue exitosa
-    if ($stmt === false) {
-        die("Error en la preparación de la consulta: " . $connection->error);
+    $stmt = mysqli_prepare($connection, $sql);
+    if (!$stmt) {
+        echo "Error al preparar la consulta: " . mysqli_error($connection);
+        return false;
     }
 
-    // Vincular los parámetros a la consulta SQL
-    if (!$stmt->bind_param("sssssissi", $nombre, $apellidos, $telefono, $email, $direccion, $pais, $estado_id, $rol_id, $id)) {
-        die("Error al vincular parámetros: " . $stmt->error);
+    // Asociar parámetros y ejecutar la consulta
+    mysqli_stmt_bind_param($stmt, 'ssssssiii', 
+        $nombre, $apellidos, $telefono, $email, $direccion, $pais, $estado_id, $rol_id, $id);
+
+    $success = mysqli_stmt_execute($stmt);
+
+    if (!$success) {
+        echo "Error al ejecutar la consulta: " . mysqli_error($connection);
     }
 
-    // Ejecutar la consulta y manejar el resultado
-    if ($stmt->execute()) {
-        echo "Usuario actualizado con éxito.";
-    } else {
-        echo "Error al actualizar el usuario: " . $stmt->error;
-    }
+    mysqli_stmt_close($stmt);
+    mysqli_close($connection);
 
-    // Cerrar la sentencia preparada
-    $stmt->close();
-    
-    // Cerrar la conexión
-    $connection->close();
-
-    return $stmt->affected_rows > 0; // Devuelve verdadero si se actualizó al menos un registro
+    return $success;
 }
+
 
 
 
@@ -257,16 +252,42 @@ function obtenerOpciones($tipo) {
     return $opciones;
 }
 
-// Registrar árbol en la base de datos
-function registrarArbol($nombreComercial, $nombreCientifico) {
+function registrarArbol($nombreComercial, $nombreCientifico, $file) {
+    // Asegúrate de que el archivo se haya subido correctamente
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        echo "Error al subir la imagen.";
+        return;
+    }
+
+    // Establecer la carpeta de destino
+    $directorioDestino = "../arboles/";
+    
+    // Crear la carpeta si no existe
+    if (!is_dir($directorioDestino)) {
+        mkdir($directorioDestino, 0777, true);
+    }
+
+    // Generar un nombre único para el archivo
+    $nombreImagen = uniqid() . "-" . basename($file['name']);
+    $rutaImagen = $directorioDestino . $nombreImagen;
+
+    // Mover el archivo a la carpeta de destino
+    if (!move_uploaded_file($file['tmp_name'], $rutaImagen)) {
+        echo "Error al mover el archivo.";
+        return;
+    }
+
+    // Guardar la ruta de la imagen en la base de datos
     $connection = getConnection();
-    $query = "INSERT INTO arboles_nuevos (nombre_comercial, nombre_cientifico) VALUES (?, ?)";
+    $query = "INSERT INTO arboles (nombre_comercial, nombre_cientifico, imagen) VALUES (?, ?, ?)";
     $stmt = mysqli_prepare($connection, $query);
 
     if ($stmt) {
-        mysqli_stmt_bind_param($stmt, 'ss', $nombreComercial, $nombreCientifico);
+        mysqli_stmt_bind_param($stmt, 'sss', $nombreComercial, $nombreCientifico, $nombreImagen); // Guardar solo el nombre del archivo
         if (mysqli_stmt_execute($stmt)) {
-            echo "Árbol registrado con éxito.";
+            echo "Árbol registrado con éxito.<br>";
+            // Mostrar todos los árboles después del registro
+            cargarArboles();
         } else {
             echo "Error al registrar el árbol: " . mysqli_error($connection);
         }
@@ -276,6 +297,41 @@ function registrarArbol($nombreComercial, $nombreCientifico) {
     }
     mysqli_close($connection);
 }
-?>
+
+
+
+function cargarArboles() {
+    $connection = getConnection(); // Conectar a la base de datos
+
+    // Consulta para obtener todos los árboles, incluyendo la imagen
+    $query = "SELECT id, nombre_comercial, nombre_cientifico, imagen FROM arboles";
+    $result = mysqli_query($connection, $query);
+
+    // Verificar si la consulta fue exitosa
+    if (!$result) {
+        die("Error al cargar árboles: " . mysqli_error($connection));
+    }
+
+    // Mostrar los árboles en una tabla
+    echo "<table border='1'>";
+    echo "<tr><th>ID</th><th>Nombre Comercial</th><th>Nombre Científico</th><th>Imagen</th></tr>";
+
+    // Recorrer los resultados y mostrarlos
+    while ($arbol = mysqli_fetch_assoc($result)) {
+        echo "<tr>";
+        echo "<td>" . $arbol['id'] . "</td>";
+        echo "<td>" . $arbol['nombre_comercial'] . "</td>";
+        echo "<td>" . $arbol['nombre_cientifico'] . "</td>";
+        echo "<td><img src='../arboles/" . htmlspecialchars($arbol['imagen']) . "' alt='Imagen del árbol' style='width: 100px; height: auto;'></td>"; // Mostrar la imagen
+        echo "</tr>";
+    }
+
+    echo "</table>";
+
+    // Cerrar la conexión
+    mysqli_close($connection);
+}
+
+
 ?>
 <?php

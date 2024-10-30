@@ -253,49 +253,43 @@ function obtenerOpciones($tipo) {
 }
 
 function registrarArbol($nombreComercial, $nombreCientifico, $file) {
-    // Asegúrate de que el archivo se haya subido correctamente
+    // Verificar si el archivo fue subido correctamente
     if ($file['error'] !== UPLOAD_ERR_OK) {
-        echo "Error al subir la imagen.";
-        return;
+        return false;
     }
 
-    // Establecer la carpeta de destino
+    // Directorio de destino para las imágenes
     $directorioDestino = "../arboles/";
-    
-    // Crear la carpeta si no existe
+
+    // Crear el directorio si no existe
     if (!is_dir($directorioDestino)) {
         mkdir($directorioDestino, 0777, true);
     }
 
-    // Generar un nombre único para el archivo
+    // Generar un nombre único para la imagen
     $nombreImagen = uniqid() . "-" . basename($file['name']);
     $rutaImagen = $directorioDestino . $nombreImagen;
 
-    // Mover el archivo a la carpeta de destino
+    // Mover la imagen al directorio de destino
     if (!move_uploaded_file($file['tmp_name'], $rutaImagen)) {
-        echo "Error al mover el archivo.";
-        return;
+        return false;
     }
 
-    // Guardar la ruta de la imagen en la base de datos
+    // Guardar los datos en la base de datos con estado activo por defecto
     $connection = getConnection();
-    $query = "INSERT INTO arboles (nombre_comercial, nombre_cientifico, imagen) VALUES (?, ?, ?)";
+    $query = "INSERT INTO arboles (nombre_comercial, nombre_cientifico, imagen, estado_id) VALUES (?, ?, ?, 1)";
     $stmt = mysqli_prepare($connection, $query);
 
     if ($stmt) {
-        mysqli_stmt_bind_param($stmt, 'sss', $nombreComercial, $nombreCientifico, $nombreImagen); // Guardar solo el nombre del archivo
-        if (mysqli_stmt_execute($stmt)) {
-            echo "Árbol registrado con éxito.<br>";
-            // Mostrar todos los árboles después del registro
-            cargarArboles();
-        } else {
-            echo "Error al registrar el árbol: " . mysqli_error($connection);
-        }
+        mysqli_stmt_bind_param($stmt, 'sss', $nombreComercial, $nombreCientifico, $nombreImagen);
+        $resultado = mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
-    } else {
-        echo "Error al preparar la consulta: " . mysqli_error($connection);
+        mysqli_close($connection);
+
+        return $resultado; // Retornar true si el registro es exitoso
     }
-    mysqli_close($connection);
+
+    return false; // Retornar false si hay un error
 }
 
 
@@ -312,26 +306,120 @@ function cargarArboles() {
         die("Error al cargar árboles: " . mysqli_error($connection));
     }
 
-    // Mostrar los árboles en una tabla
-    echo "<table border='1'>";
-    echo "<tr><th>ID</th><th>Nombre Comercial</th><th>Nombre Científico</th><th>Imagen</th></tr>";
-
-    // Recorrer los resultados y mostrarlos
-    while ($arbol = mysqli_fetch_assoc($result)) {
-        echo "<tr>";
-        echo "<td>" . $arbol['id'] . "</td>";
-        echo "<td>" . $arbol['nombre_comercial'] . "</td>";
-        echo "<td>" . $arbol['nombre_cientifico'] . "</td>";
-        echo "<td><img src='../arboles/" . htmlspecialchars($arbol['imagen']) . "' alt='Imagen del árbol' style='width: 100px; height: auto;'></td>"; // Mostrar la imagen
-        echo "</tr>";
-    }
-
-    echo "</table>";
-
-    // Cerrar la conexión
-    mysqli_close($connection);
+    return $result; // Retornar el resultado de la consulta
 }
 
 
+function editarArbol($id, $nombreComercial, $nombreCientifico, $file = null) {
+    $connection = getConnection();
+    $query = "UPDATE arboles SET nombre_comercial = ?, nombre_cientifico = ?";
+
+    $params = [$nombreComercial, $nombreCientifico];
+    $paramTypes = 'ss';
+
+    // Verificar si se está subiendo una nueva imagen
+    if ($file && $file['error'] === UPLOAD_ERR_OK) {
+        $directorioDestino = "../arboles/";
+
+        // Crear el directorio si no existe
+        if (!is_dir($directorioDestino)) {
+            mkdir($directorioDestino, 0777, true);
+        }
+
+        // Generar un nombre único para la imagen
+        $nombreImagen = uniqid() . "-" . basename($file['name']);
+        $rutaImagen = $directorioDestino . $nombreImagen;
+
+        // Mover la imagen al directorio de destino
+        if (move_uploaded_file($file['tmp_name'], $rutaImagen)) {
+            $query .= ", imagen = ?";
+            $params[] = $nombreImagen;
+            $paramTypes .= 's';
+        } else {
+            return [
+                "success" => false,
+                "message" => "Error al subir la imagen."
+            ];
+        }
+    }
+
+    $query .= " WHERE id = ?";
+    $params[] = $id;
+    $paramTypes .= 'i';
+
+    $stmt = mysqli_prepare($connection, $query);
+
+    // Verificar la preparación de la consulta
+    if (!$stmt) {
+        return [
+            "success" => false,
+            "message" => "Error al preparar la consulta."
+        ];
+    }
+
+    mysqli_stmt_bind_param($stmt, $paramTypes, ...$params);
+    $resultado = mysqli_stmt_execute($stmt);
+
+    if ($resultado) {
+        $mensaje = "Árbol actualizado correctamente.";
+        
+    } else {
+        $mensaje = "Error al actualizar el árbol: " . mysqli_error($connection);
+    }
+
+    mysqli_stmt_close($stmt);
+    mysqli_close($connection);
+
+    return [
+        "success" => $resultado,
+        "message" => $mensaje
+    ];
+}
+
+
+
+
+function eliminarArbol($id) {
+    $connection = getConnection();
+
+    // Obtener la imagen asociada para eliminarla del servidor
+    $queryImagen = "SELECT imagen FROM arboles WHERE id = ?";
+    $stmtImagen = mysqli_prepare($connection, $queryImagen);
+    mysqli_stmt_bind_param($stmtImagen, 'i', $id);
+    mysqli_stmt_execute($stmtImagen);
+    mysqli_stmt_bind_result($stmtImagen, $imagen);
+    mysqli_stmt_fetch($stmtImagen);
+    mysqli_stmt_close($stmtImagen);
+
+    // Eliminar la imagen del servidor
+    if ($imagen && file_exists("../arboles/" . $imagen)) {
+        unlink("../arboles/" . $imagen);
+    }
+
+    // Eliminar el registro de la base de datos
+    $query = "DELETE FROM arboles WHERE id = ?";
+    $stmt = mysqli_prepare($connection, $query);
+    mysqli_stmt_bind_param($stmt, 'i', $id);
+
+    $resultado = mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+    mysqli_close($connection);
+
+    if ($resultado) {
+        // Redirigir a la página de administración de árboles
+        header("Location: adm_trees.php");
+        exit();
+    } else {
+        return json_encode([
+            "success" => false,
+            "message" => "Error al eliminar el árbol."
+        ]);
+    }
+}
+
+
+
+
 ?>
+
 <?php

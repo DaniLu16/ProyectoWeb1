@@ -1,4 +1,4 @@
-<?php
+<?php 
 require('../includes/header_us.php'); 
 include('../funciones.php');
 
@@ -8,34 +8,46 @@ $opcionesCientifico = obtenerOpciones('nombre_cientifico');
 
 // Inicializar variables para el mensaje
 $mensaje = '';
+$tipoMensaje = ''; // Variable para determinar si es éxito o error
+
+// Mostrar el mensaje de éxito después de la redirección
+if (isset($_GET['msg'])) {
+    $mensaje = htmlspecialchars($_GET['msg']);
+    $tipoMensaje = 'success';
+}
 
 // Lógica de registro cuando se envía el formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nombreComercial = $_POST['nombre_comercial'];
-    $nombreCientifico = $_POST['nombre_cientifico'];
+    // Limpiar los datos de entrada
+    $nombreComercial = trim($_POST['nombre_comercial']);
+    $nombreCientifico = trim($_POST['nombre_cientifico']);
     $imagen = $_FILES['imagen'];
 
-    // Llamar a la función de registro
-    if (registrarArbol($nombreComercial, $nombreCientifico, $imagen)) {
-        $mensaje = "Árbol registrado con éxito.";
-        
-        // Redireccionar a la misma página para evitar el reenvío del formulario
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit();
+    // Validar que los campos no estén vacíos
+    if (empty($nombreComercial) || empty($nombreCientifico) || $imagen['error'] !== UPLOAD_ERR_OK) {
+        $mensaje = "Por favor, complete todos los campos y suba una imagen válida.";
+        $tipoMensaje = 'error';
     } else {
-        $mensaje = "Error al registrar el árbol. Por favor, inténtelo de nuevo.";
+        // Llamar a la función de registro
+        if (registrarArbol($nombreComercial, $nombreCientifico, $imagen)) {
+            // Redirigir a la misma página con mensaje de éxito
+            header("Location: " . htmlspecialchars($_SERVER['PHP_SELF']) . "?msg=Árbol registrado con éxito");
+            exit();
+        } else {
+            $mensaje = "Error al registrar el árbol. Por favor, inténtelo de nuevo.";
+            $tipoMensaje = 'error';
+        }
     }
 }
 ?>
 
-<div class="form-wrapper"> <!-- Contenedor para el formulario -->
- 
+<div class="form-container">
     <h1 class="text-center">Registrar Árbol</h1>
 
     <!-- Mostrar mensaje si está presente -->
     <?php if (!empty($mensaje)): ?>
-        <div class="alert alert-success" role="alert">
-            <?php echo htmlspecialchars($mensaje); ?>
+        <div class="alert alert-<?= $tipoMensaje === 'success' ? 'success' : 'danger' ?>" role="alert">
+            <?php echo $mensaje; ?>
         </div>
     <?php endif; ?>
 

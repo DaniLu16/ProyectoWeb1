@@ -1,47 +1,14 @@
-<body class="signup-background">
+<body class="signup-background2">
 <?php
 session_start(); 
-require('includes/header.php');
+require('includes/header_admin.php');
 
 // Verificar si el usuario ha iniciado sesión
 if (isset($_SESSION['user_name'])) {
     $nombre = $_SESSION['user_name'];
     echo '<div class="welcome-message">Bienvenido Amigo, ' . htmlspecialchars($nombre) . '!</div>';
 
-    // Crear la barra de navegación
-    echo '<nav class="options-navbar">';
-    echo '<ul>';
-    echo '<li><a href="#" onclick="loadContent(\'dashboard.php\')">Dashboard</a></li>';
-
-    // Menú de Especies con submenú
-    echo '<li class="dropdown">
-            <a href="#" onclick="toggleMenu(event)">Especies</a>
-            <ul class="submenu">
-                <li><a href="#" onclick="loadContent(\'agregar_especie.php\')">Nueva Especie</a></li>
-                <li><a href="#" onclick="loadContent(\'administrar_especie.php\')">Administrar Especies</a></li>
-            </ul>
-          </li>';
-
-    // Menú de Amigos con submenú
-    echo '<li class="dropdown">
-            <a href="#" onclick="toggleMenu(event)">Amigos</a>
-            <ul class="submenu">
-                <li><a href="#" onclick="loadContent(\'administrar_arboles.php\')">Ver Árboles por Amigo</a></li>
-                <li><a href="#" onclick="loadContent(\'editar_arboles_amigo.php\')">Administrar los Árboles de un Amigo</a></li>
-                <li><a href="#" onclick="loadContent(\'administrador/adm_user.php\')">Administrar Amigos</a></li>
-            </ul>
-          </li>';
-
-    // Menú de Árboles con submenú
-    echo '<li class="dropdown">
-            <a href="#" onclick="toggleMenu(event)">Árboles</a>
-            <ul class="submenu">
-                <li><a href="#" onclick="loadContent(\'administrador/regis_trees.php\')">Nuevo árbol</a></li>
-                <li><a href="#" onclick="loadContent(\'administrador/adm_trees.php\')">Administrar Árboles</a></li>
-            </ul>
-          </li>';
-    echo '</ul>';
-    echo '</nav>';
+    
     
     // Contenedor para el contenido cargado
     echo '<div id="content-container"></div>';

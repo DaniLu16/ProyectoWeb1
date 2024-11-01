@@ -2,9 +2,8 @@
 require('../includes/header_us.php'); 
 include('../funciones.php');
 
-// Opciones para los combos
-$opcionesComercial = obtenerOpciones('nombre_comercial');
-$opcionesCientifico = obtenerOpciones('nombre_cientifico');
+// Opciones para las especies
+$opcionesEspecie = obtenerOpcionesEspecies(); // Función que obtiene las especies de la tabla 'especies'
 
 // Inicializar variables para el mensaje
 $mensaje = '';
@@ -19,17 +18,18 @@ if (isset($_GET['msg'])) {
 // Lógica de registro cuando se envía el formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Limpiar los datos de entrada
-    $nombreComercial = trim($_POST['nombre_comercial']);
-    $nombreCientifico = trim($_POST['nombre_cientifico']);
+    $especieId = trim($_POST['especie']);
+    $ubicacion = trim($_POST['ubicacion']);
+    $precio = trim($_POST['precio']);
     $imagen = $_FILES['imagen'];
 
     // Validar que los campos no estén vacíos
-    if (empty($nombreComercial) || empty($nombreCientifico) || $imagen['error'] !== UPLOAD_ERR_OK) {
+    if (empty($especieId) || empty($ubicacion) || empty($precio) || $imagen['error'] !== UPLOAD_ERR_OK) {
         $mensaje = "Por favor, complete todos los campos y suba una imagen válida.";
         $tipoMensaje = 'error';
     } else {
         // Llamar a la función de registro
-        if (registrarArbol($nombreComercial, $nombreCientifico, $imagen)) {
+        if (registrarArbol($especieId, $ubicacion, $precio, $imagen)) {
             // Redirigir a la misma página con mensaje de éxito
             header("Location: " . htmlspecialchars($_SERVER['PHP_SELF']) . "?msg=Árbol registrado con éxito");
             exit();
@@ -53,23 +53,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST" enctype="multipart/form-data">
         <div class="form-group">
-            <label for="nombre_comercial">Nombre Comercial:</label>
-            <select name="nombre_comercial" id="nombre_comercial" class="form-control" required>
-                <option value="">Seleccione un nombre comercial</option>
-                <?php foreach ($opcionesComercial as $opcion): ?>
-                    <option value="<?= htmlspecialchars($opcion) ?>"><?= htmlspecialchars($opcion) ?></option>
+            <label for="especie">Especie:</label>
+            <select name="especie" id="especie" class="form-control" required>
+                <option value="">Seleccione una especie</option>
+                <?php foreach ($opcionesEspecie as $opcion): ?>
+                    <option value="<?= htmlspecialchars($opcion['id']) ?>"><?= htmlspecialchars($opcion['nombre_comercial'] . " (" . $opcion['nombre_cientifico'] . ")") ?></option>
                 <?php endforeach; ?>
             </select>
         </div>
 
         <div class="form-group">
-            <label for="nombre_cientifico">Nombre Científico:</label>
-            <select name="nombre_cientifico" id="nombre_cientifico" class="form-control" required>
-                <option value="">Seleccione un nombre científico</option>
-                <?php foreach ($opcionesCientifico as $opcion): ?>
-                    <option value="<?= htmlspecialchars($opcion) ?>"><?= htmlspecialchars($opcion) ?></option>
-                <?php endforeach; ?>
-            </select>
+            <label for="ubicacion">Ubicación:</label>
+            <input type="text" name="ubicacion" id="ubicacion" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="precio">Precio:</label>
+            <input type="text" name="precio" id="precio" class="form-control" step="0.01" min="0" required>
         </div>
 
         <div class="form-group">

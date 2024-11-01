@@ -252,7 +252,7 @@ function obtenerOpciones($tipo) {
     return $opciones;
 }
 
-function registrarArbol($nombreComercial, $nombreCientifico, $file) {
+function registrarArbol($especieId, $ubicacion, $precio, $file) {
     // Verificar si el archivo fue subido correctamente
     if ($file['error'] !== UPLOAD_ERR_OK) {
         return false;
@@ -275,13 +275,72 @@ function registrarArbol($nombreComercial, $nombreCientifico, $file) {
         return false;
     }
 
-    // Guardar los datos en la base de datos con estado activo por defecto
+    // Guardar los datos en la tabla arboles_dispo con estado disponible = 1 por defecto
     $connection = getConnection();
-    $query = "INSERT INTO arboles (nombre_comercial, nombre_cientifico, imagen, estado_id) VALUES (?, ?, ?, 1)";
+    $query = "INSERT INTO arboles_dispo (especie, ubicacion, estado, precio, imagen) VALUES (?, ?, 1, ?, ?)";
     $stmt = mysqli_prepare($connection, $query);
 
     if ($stmt) {
-        mysqli_stmt_bind_param($stmt, 'sss', $nombreComercial, $nombreCientifico, $nombreImagen);
+        mysqli_stmt_bind_param($stmt, 'isds', $especieId, $ubicacion, $precio, $nombreImagen);
+        $resultado = mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+        mysqli_close($connection);
+
+        return $resultado; // Retornar true si el registro es exitoso
+    }
+
+    return false; // Retornar false si hay un error
+}
+
+function obtenerOpcionesEspecies() {
+    $connection = getConnection();
+    $query = "SELECT id, nombre_comercial, nombre_cientifico FROM especies";
+    $result = mysqli_query($connection, $query);
+    
+    $especies = [];
+    if ($result) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $especies[] = $row;
+        }
+    } else {
+        die("Error al cargar especies: " . mysqli_error($connection));
+    }
+
+    mysqli_close($connection);
+    return $especies;
+}
+
+
+
+function cargarArboles() {
+    $connection = getConnection(); // Conectar a la base de datos
+
+    // Consulta para obtener todos los árboles de arboles_dispo, incluyendo los datos de la especie y la imagen
+    $query = "
+        SELECT ad.id, e.nombre_comercial, e.nombre_cientifico, ad.ubicacion, ad.estado, ad.precio, ad.imagen 
+        FROM arboles_dispo AS ad
+        JOIN especies AS e ON ad.especie = e.id
+    ";
+    
+    $result = mysqli_query($connection, $query);
+
+    // Verificar si la consulta fue exitosa
+    if (!$result) {
+        die("Error al cargar árboles: " . mysqli_error($connection));
+    }
+
+    return $result; // Retornar el resultado de la consulta
+}
+
+
+function registrarEspecie($nombreComercial, $nombreCientifico) {
+   
+    $connection = getConnection();
+    $query = "INSERT INTO especies (nombre_comercial, nombre_cientifico) VALUES (?, ?)";
+    $stmt = mysqli_prepare($connection, $query);
+
+    if ($stmt) {
+        mysqli_stmt_bind_param($stmt, 'ss', $nombreComercial, $nombreCientifico);
         $resultado = mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
         mysqli_close($connection);
@@ -294,43 +353,44 @@ function registrarArbol($nombreComercial, $nombreCientifico, $file) {
 
 
 
-function cargarArboles() {
+function cargarEspecie() {
     $connection = getConnection(); // Conectar a la base de datos
 
-    // Consulta para obtener todos los árboles, incluyendo la imagen
-    $query = "SELECT id, nombre_comercial, nombre_cientifico, imagen FROM arboles";
+    // Consulta para obtener todas las especies
+    $query = "SELECT id, nombre_comercial, nombre_cientifico FROM especies";
     $result = mysqli_query($connection, $query);
 
     // Verificar si la consulta fue exitosa
     if (!$result) {
-        die("Error al cargar árboles: " . mysqli_error($connection));
+        die("Error al cargar especies: " . mysqli_error($connection));
     }
 
     return $result; // Retornar el resultado de la consulta
 }
 
-
-function editarArbol($id, $nombreComercial, $nombreCientifico, $file = null) {
+function editarArbol($id, $especie, $ubicacion, $precio, $estado, $file = null) {
     $connection = getConnection();
-    $query = "UPDATE arboles SET nombre_comercial = ?, nombre_cientifico = ?";
+    if (!$connection) {
+        return [
+            "success" => false,
+            "message" => "Error de conexión: " . mysqli_connect_error()
+        ];
+    }
 
-    $params = [$nombreComercial, $nombreCientifico];
-    $paramTypes = 'ss';
+    // Ajusta la consulta con los nombres de columna correctos
+    $query = "UPDATE arboles_dispo SET especie = ?, ubicacion = ?, precio = ?, estado = ?";
+    $params = [$especie, $ubicacion, $precio, $estado];
+    $paramTypes = 'ssdi'; // s: string, d: double, i: integer
 
-    // Verificar si se está subiendo una nueva imagen
     if ($file && $file['error'] === UPLOAD_ERR_OK) {
         $directorioDestino = "../arboles/";
-
-        // Crear el directorio si no existe
         if (!is_dir($directorioDestino)) {
             mkdir($directorioDestino, 0777, true);
         }
 
-        // Generar un nombre único para la imagen
         $nombreImagen = uniqid() . "-" . basename($file['name']);
         $rutaImagen = $directorioDestino . $nombreImagen;
 
-        // Mover la imagen al directorio de destino
         if (move_uploaded_file($file['tmp_name'], $rutaImagen)) {
             $query .= ", imagen = ?";
             $params[] = $nombreImagen;
@@ -348,24 +408,22 @@ function editarArbol($id, $nombreComercial, $nombreCientifico, $file = null) {
     $paramTypes .= 'i';
 
     $stmt = mysqli_prepare($connection, $query);
-
-    // Verificar la preparación de la consulta
     if (!$stmt) {
         return [
             "success" => false,
-            "message" => "Error al preparar la consulta."
+            "message" => "Error al preparar la consulta: " . mysqli_error($connection)
         ];
     }
 
-    mysqli_stmt_bind_param($stmt, $paramTypes, ...$params);
-    $resultado = mysqli_stmt_execute($stmt);
-
-    if ($resultado) {
-        $mensaje = "Árbol actualizado correctamente.";
-        
-    } else {
-        $mensaje = "Error al actualizar el árbol: " . mysqli_error($connection);
+    if (!mysqli_stmt_bind_param($stmt, $paramTypes, ...$params)) {
+        return [
+            "success" => false,
+            "message" => "Error al enlazar parámetros: " . mysqli_stmt_error($stmt)
+        ];
     }
+
+    $resultado = mysqli_stmt_execute($stmt);
+    $mensaje = $resultado ? "Árbol actualizado correctamente." : "Error al ejecutar la consulta: " . mysqli_stmt_error($stmt);
 
     mysqli_stmt_close($stmt);
     mysqli_close($connection);
@@ -375,6 +433,8 @@ function editarArbol($id, $nombreComercial, $nombreCientifico, $file = null) {
         "message" => $mensaje
     ];
 }
+
+
 
 
 
@@ -417,9 +477,77 @@ function eliminarArbol($id) {
     }
 }
 
+function eliminarEspecie($id) {
+    $connection = getConnection();
 
 
+
+    // Eliminar el registro de la base de datos
+    $query = "DELETE FROM especies WHERE id = ?";
+    $stmt = mysqli_prepare($connection, $query);
+    mysqli_stmt_bind_param($stmt, 'i', $id);
+
+    $resultado = mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+    mysqli_close($connection);
+
+    if ($resultado) {
+        // Redirigir a la página de administración de árboles
+        header("Location: adm_especie.php");
+        exit();
+    } else {
+        return json_encode([
+            "success" => false,
+            "message" => "Error al eliminar especie."
+        ]);
+    }
+ 
+}
+ 
+function editarEspecie($id, $nombreComercial, $nombreCientifico) {
+    $connection = getConnection();
+    
+    // Consulta con WHERE para especificar el registro a actualizar
+    $query = "UPDATE especies SET nombre_comercial = ?, nombre_cientifico = ? WHERE id = ?";
+    
+    // Preparación de la declaración
+    $stmt = $connection->prepare($query);
+    $paramTypes = 'ssi'; // 'ssi' indica los tipos: string, string, integer
+    $stmt->bind_param($paramTypes, $nombreComercial, $nombreCientifico, $id);
+    
+    // Ejecución de la declaración
+    if ($stmt->execute()) {
+        $stmt->close();
+        $connection->close();
+        return ['success' => true, 'message' => 'Especie actualizada exitosamente.'];
+    } else {
+        $error = $stmt->error;
+        $stmt->close();
+        $connection->close();
+        return ['success' => false, 'message' => "Error al actualizar la especie: $error"];
+    }
+}
+
+function cargarArbolesDisponibles() {
+    $connection = getConnection(); // Conectar a la base de datos
+
+    // Consulta para obtener todos los árboles disponibles (estado = 1) incluyendo los datos de la especie y la imagen
+    $query = "
+        SELECT ad.id, e.nombre_comercial, e.nombre_cientifico, ad.ubicacion, ad.estado, ad.precio, ad.imagen 
+        FROM arboles_dispo AS ad
+        JOIN especies AS e ON ad.especie = e.id
+        WHERE ad.estado = 1
+    ";
+    
+    $result = mysqli_query($connection, $query);
+
+    // Verificar si la consulta fue exitosa
+    if (!$result) {
+        die("Error al cargar árboles: " . mysqli_error($connection));
+    }
+
+    return $result; // Retornar el resultado de la consulta
+}
 
 ?>
-
 <?php

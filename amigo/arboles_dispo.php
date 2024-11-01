@@ -1,9 +1,11 @@
+<body class="signup-background2">
 <?php  
-require('../includes/header_admin.php'); 
+
+require('../includes/header_amigo.php'); 
 include('../funciones.php');
 
 // Cargar árboles desde la base de datos
-$result = cargarArboles(); // Llamar a la función que carga los árboles
+$result = cargarArbolesDisponibles(); // Llamar a la función que carga los árboles
 
 ?>
 <div class="container mt-5">
@@ -39,16 +41,11 @@ $result = cargarArboles(); // Llamar a la función que carga los árboles
                         <td><?php echo htmlspecialchars($arbol['ubicacion']); ?></td>
                         <td><?php echo htmlspecialchars($arbol['estado'] == 1 ? 'Disponible' : 'No Disponible'); ?></td>
                         <td><?php echo htmlspecialchars($arbol['precio']); ?></td>
-                        <td><img src="../arboles/<?php echo htmlspecialchars($arbol['imagen']); ?>" alt="Imagen del árbol" style="width: 100px; height: auto;"></td>
+                        <td>
+                            <img src="../arboles/<?php echo htmlspecialchars($arbol['imagen']); ?>" alt="Imagen de <?php echo htmlspecialchars($arbol['nombre_comercial']); ?>" style="width: 100px; height: auto;">
+                        </td>
                         <td style="white-space: nowrap;">
-                            <a href="#" class="action-btn edit-btn" 
-                               onclick="loadContent('administrador/eddit_tree.php?id=<?php echo htmlspecialchars($arbol['id']); ?>'); return false;">
-                               Editar
-                            </a>
-                            <a href="#" class="action-btn delete-btn" 
-                               onclick="loadContent('administrador/delete_tree.php?id=<?php echo htmlspecialchars($arbol['id']); ?>'); return false;">
-                               Eliminar
-                            </a>
+                            <a href="comprar.php?id=<?php echo $arbol['id']; ?>" class="btn btn-success">Comprar</a>
                         </td>
                     </tr>
                 <?php endwhile; ?>
@@ -57,7 +54,6 @@ $result = cargarArboles(); // Llamar a la función que carga los árboles
     </div>
 </div>
 
-<?php 
-
-
+<?php
 ?>
+</body>

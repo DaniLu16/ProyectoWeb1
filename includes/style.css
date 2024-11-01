@@ -6,8 +6,8 @@ h1 {
     margin: 20px 0; /* Añade espacio arriba y abajo del título */
 }
 
-.signup-background { 
-    background-image: url('../images/background1.jpg');
+.signup-background2 { 
+    background-image: url('../images/back.jpg');
 }
 
 /* Fondo para el formulario de inicio de sesión */
@@ -40,7 +40,7 @@ body {
 
 /* Estilos del menú de navegación */
 .nav {
-    background-color: transparent; /* Fondo transparente del menú */
+    /*background-color: transparent; /* Fondo transparente del menú */
     border: none; /* Elimina cualquier borde */
     margin: 0; /* Elimina el margen */
     padding: 0; /* Elimina el relleno */

@@ -113,6 +113,7 @@ function editarUsuario($id, $nombre, $apellidos, $telefono, $email, $direccion, 
         $nombre, $apellidos, $telefono, $email, $direccion, $pais, $estado_id, $rol_id, $id);
 
     $success = mysqli_stmt_execute($stmt);
+    
 
     if (!$success) {
         return ['success' => false, 'message' => "Error al ejecutar la consulta: " . mysqli_error($connection)];
@@ -122,6 +123,7 @@ function editarUsuario($id, $nombre, $apellidos, $telefono, $email, $direccion, 
     mysqli_close($connection);
 
     return ['success' => true, 'message' => 'Usuario actualizado con éxito'];
+    
 }
 
 function loginUsuario($email, $password) {

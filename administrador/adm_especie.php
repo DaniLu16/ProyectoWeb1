@@ -49,7 +49,7 @@ $result = cargarEspecie(); // Llamar a la función que carga las especies
                             class="action-btn edit-btn">
                             Editar
                             </a>
-                            <a href="administrador/delete_especie.php?id=<?php echo urlencode($especie['id']); ?>" 
+                            <a href="../administrador/delete_especie.php?id=<?php echo urlencode($especie['id']); ?>" 
                             class="action-btn delete-btn">
                             Eliminar
                             </a>

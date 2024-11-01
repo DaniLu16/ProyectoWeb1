@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php if (!empty($error)): ?>
         <div class="alert alert-danger"><?php echo $error; ?></div>
     <?php endif; ?>
-    <form action="administrador/eddit_especie.php" method="POST" enctype="multipart/form-data">
+    <form action="eddit_especie.php" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="id" value="<?php echo htmlspecialchars($arbol['id']); ?>">
 
         <div class="form-row">

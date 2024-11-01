@@ -1,3 +1,4 @@
+<body class="signup-background2"> <!-- Cambiado a signup-background2 -->
 <?php
 include('../funciones.php');
 include('../includes/header_admin.php');
@@ -102,3 +103,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
     </form>
 </div>
+</body>

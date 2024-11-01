@@ -389,6 +389,7 @@ function editarArbol($id, $especie, $ubicacion, $precio, $estado, $file = null) 
         $nombreImagen = uniqid() . "-" . basename($file['name']);
         $rutaImagen = $directorioDestino . $nombreImagen;
 
+        // Mover la imagen y verificar si se realizó correctamente
         if (move_uploaded_file($file['tmp_name'], $rutaImagen)) {
             $query .= ", imagen = ?";
             $params[] = $nombreImagen;
@@ -413,6 +414,10 @@ function editarArbol($id, $especie, $ubicacion, $precio, $estado, $file = null) 
         ];
     }
 
+    // Para depuración: mostrar la consulta y los parámetros
+    error_log("Consulta: " . $query);
+    error_log("Parámetros: " . json_encode($params));
+    
     if (!mysqli_stmt_bind_param($stmt, $paramTypes, ...$params)) {
         return [
             "success" => false,
@@ -431,6 +436,7 @@ function editarArbol($id, $especie, $ubicacion, $precio, $estado, $file = null) 
         "message" => $mensaje
     ];
 }
+
 
 function eliminarArbol($id) {
     $connection = getConnection();

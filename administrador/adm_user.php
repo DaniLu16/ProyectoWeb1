@@ -56,12 +56,10 @@ if (!$result) {
                         <td><?php echo htmlspecialchars($usuario['estado_id']); ?></td>
                         <td><?php echo htmlspecialchars($usuario['ultimo_inicio_sesion']); ?></td>
                         <td style="white-space: nowrap;">
-                            <a href="#" class="action-btn edit-btn" 
-                               onclick="loadContent('administrador/eddit_user.php?id=<?php echo htmlspecialchars($usuario['id']); ?>'); return false;">
+                            <a href="../administrador/eddit_user.php?id=<?php echo htmlspecialchars($usuario['id']); ?>" class="action-btn edit-btn">
                                Editar
                             </a>
-                            <a href="#" class="action-btn delete-btn" 
-                               onclick="loadContent('administrador/delete_user.php?id=<?php echo htmlspecialchars($usuario['id']); ?>'); return false;">
+                            <a href="/administrador/delete_user.php?id=<?php echo htmlspecialchars($usuario['id']); ?>" class="action-btn delete-btn">
                                Eliminar
                             </a>
                         </td>
@@ -74,4 +72,4 @@ if (!$result) {
 
 <?php 
 mysqli_close($connection);
-?>
+?>  

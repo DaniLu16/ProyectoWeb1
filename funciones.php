@@ -105,8 +105,7 @@ function editarUsuario($id, $nombre, $apellidos, $telefono, $email, $direccion, 
 
     $stmt = mysqli_prepare($connection, $sql);
     if (!$stmt) {
-        echo "Error al preparar la consulta: " . mysqli_error($connection);
-        return false;
+        return ['success' => false, 'message' => "Error al preparar la consulta: " . mysqli_error($connection)];
     }
 
     // Asociar parámetros y ejecutar la consulta
@@ -116,17 +115,14 @@ function editarUsuario($id, $nombre, $apellidos, $telefono, $email, $direccion, 
     $success = mysqli_stmt_execute($stmt);
 
     if (!$success) {
-        echo "Error al ejecutar la consulta: " . mysqli_error($connection);
+        return ['success' => false, 'message' => "Error al ejecutar la consulta: " . mysqli_error($connection)];
     }
 
     mysqli_stmt_close($stmt);
     mysqli_close($connection);
 
-    return $success;
+    return ['success' => true, 'message' => 'Usuario actualizado con éxito'];
 }
-
-
-
 
 function loginUsuario($email, $password) {
     $connection = getConnection();

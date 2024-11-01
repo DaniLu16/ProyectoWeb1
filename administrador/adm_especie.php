@@ -45,7 +45,7 @@ $result = cargarEspecie(); // Llamar a la función que carga las especies
                         <td><?php echo htmlspecialchars($especie['nombre_comercial']); ?></td>
                         <td><?php echo htmlspecialchars($especie['nombre_cientifico']); ?></td>
                         <td style="white-space: nowrap;"> <!-- Evita que los botones se envuelvan en varias líneas -->
-                            <a href="administrador/eddit_especie.php?id=<?php echo urlencode($especie['id']); ?>" 
+                            <a href="../administrador/eddit_especie.php?id=<?php echo urlencode($especie['id']); ?>" 
                             class="action-btn edit-btn">
                             Editar
                             </a>

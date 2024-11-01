@@ -50,7 +50,7 @@ $result = cargarArboles(); // Llamar a la función que carga los árboles
                             <img src="../arboles/<?php echo htmlspecialchars($arbol['imagen']); ?>" alt="Imagen del árbol" style="width: 100px; height: auto;">
                         </td>
                         <td style="white-space: nowrap;">
-                            <a href="administrador/eddit_tree.php?id=<?php echo htmlspecialchars($arbol['id']); ?>" class="action-btn edit-btn">
+                            <a href="/administrador/eddit_tree.php?id=<?php echo htmlspecialchars($arbol['id']); ?>" class="action-btn edit-btn">
                                Editar
                             </a>
                             <a href="administrador/delete_tree.php?id=<?php echo htmlspecialchars($arbol['id']); ?>" class="action-btn delete-btn">

@@ -11,9 +11,6 @@
 <body>
   <!-- Nav tabs -->
   <ul class="nav nav-tabs" id="navId">
-    
-
-  
     <li class="nav-item dropdown">
       
       <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Especies</a>

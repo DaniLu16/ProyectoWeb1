@@ -1,7 +1,12 @@
 <body class="signup-background2">
 <?php
 include('../funciones.php');
-require('includes/header_admin.php');
+require('../includes/header_admin.php');
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+
 // Inicializar la variable de error
 $error = '';
 

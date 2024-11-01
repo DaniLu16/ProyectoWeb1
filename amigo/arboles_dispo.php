@@ -1,4 +1,4 @@
-<body class="signup-background2">
+
 <?php  
 
 require('../includes/header_amigo.php'); 
@@ -8,6 +8,7 @@ include('../funciones.php');
 $result = cargarArbolesDisponibles(); // Llamar a la función que carga los árboles
 
 ?>
+<body class="signup-background2"> <!-- Cambiado a signup-background2 -->
 <div class="container mt-5">
     <div class="form-wrapper"> 
 

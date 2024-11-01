@@ -1,7 +1,7 @@
 <?php require('includes/header.php'); 
       require('funciones.php'); ?>
 
-<body class="signup-background">
+<body class="signup-background2">
     <div class="signup-container">
         <div class="form-wrapper"> <!-- Contenedor para el formulario -->
             <h1 class="text-center">Sign Up</h1>

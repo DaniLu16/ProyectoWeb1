@@ -1,7 +1,11 @@
 <?php 
 require('../includes/header_us.php'); 
 include('../funciones.php');
+?>
 
+<body class="signup-background2">
+
+<?php
 // Opciones para las especies
 $opcionesEspecie = obtenerOpcionesEspecies(); // Función que obtiene las especies de la tabla 'especies'
 
@@ -80,3 +84,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit" class="btn">Registrar Árbol</button>
     </form>
 </div> <!-- Cierre del contenedor del formulario -->
+
+</body>

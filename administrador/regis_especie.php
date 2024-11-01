@@ -1,7 +1,11 @@
 <?php 
 require('../includes/header_us.php'); 
 include('../funciones.php');
+?>
 
+<body class="signup-background2">
+
+<?php
 // Opciones para los combos
 $opcionesComercial = obtenerOpciones('nombre_comercial');
 $opcionesCientifico = obtenerOpciones('nombre_cientifico');
@@ -18,7 +22,7 @@ if (isset($_GET['msg'])) {
 
 // Lógica de registro cuando se envía el formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Limpiar los datos de entradasssss
+    // Limpiar los datos de entrada
     $nombreComercial = trim($_POST['nombre_comercial']);
     $nombreCientifico = trim($_POST['nombre_cientifico']);
 
@@ -68,3 +72,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit" class="btn">Registrar Especie</button>
     </form>
 </div> <!-- Cierre del contenedor del formulario -->
+
+</body>

@@ -434,11 +434,6 @@ function editarArbol($id, $especie, $ubicacion, $precio, $estado, $file = null) 
     ];
 }
 
-
-
-
-
-
 function eliminarArbol($id) {
     $connection = getConnection();
 

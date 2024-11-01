@@ -2,6 +2,9 @@
 require('../includes/header_us.php'); 
 include('../funciones.php');
 
+// Agregar la clase al body después de cargar el header
+echo '<script>document.body.className += " signup-background2";</script>';
+
 // Obtener la conexión a la base de datos
 $connection = getConnection();
 
@@ -62,5 +65,4 @@ $result = cargarEspecie(); // Llamar a la función que carga las especies
 // Cerrar la conexión
 mysqli_close($connection);
 ?>
-
-<?php 
+<?

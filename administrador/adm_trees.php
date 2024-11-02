@@ -53,7 +53,7 @@ $result = cargarArboles(); // Llamar a la función que carga los árboles
                             <a href="../administrador/eddit_tree.php?id=<?php echo htmlspecialchars($arbol['id']); ?>" class="action-btn edit-btn">
                                Editar
                             </a>
-                            <a href="../administrador/delete_tree.php?id=<?php echo htmlspecialchars($arbol['id']); ?>" class="action-btn delete-btn">
+                            <a href="/administrador/delete_tree.php?id=<?php echo htmlspecialchars($arbol['id']); ?>" class="action-btn delete-btn">
                                Eliminar
                             </a>
                         </td>

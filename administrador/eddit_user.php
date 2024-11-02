@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Verificar el resultado de la operación
     if ($resultado['success']) {
-        header("Location: administrador/adm_user.php?msg=" . urlencode($resultado['message']));
+        header("Location: adm_user.php?msg=" . urlencode($resultado['message']));
         exit;
     } else {
         $error = $resultado['message']; // Se asume que el error está en el mensaje

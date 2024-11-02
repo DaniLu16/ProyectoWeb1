@@ -570,6 +570,55 @@ function obtenerArbolesCompradosPorUsuario($user_id) {
     return $result;
 }
 
+function obtenerListaAmigos() {
+    $connection = getConnection();
+
+    $query = "SELECT id, nombre, apellidos, email FROM amigos";
+    $result = mysqli_query($connection, $query);
+
+    if (!$result) {
+        die("Error al obtener la lista de amigos: " . mysqli_error($connection));
+    }
+
+    return $result;
+}
+
+function obtenerArbolesCompradosPorAmigos() {
+    $connection = getConnection();
+
+    $query = "
+        SELECT a.id AS amigo_id, a.nombre, a.apellidos, ad.id AS arbol_id, e.nombre_comercial, e.nombre_cientifico, ad.ubicacion, ad.precio, ad.imagen, c.fecha_compra
+        FROM compras AS c
+        JOIN arboles_dispo AS ad ON c.arbol_id = ad.id
+        JOIN especies AS e ON ad.especie = e.id
+        JOIN amigos AS a ON c.user_id = a.id
+    ";
+
+    $result = mysqli_query($connection, $query);
+
+    if (!$result) {
+        die("Error al obtener árboles comprados por amigos: " . mysqli_error($connection));
+    }
+
+    return $result;
+}
+
+
+function obtenerAmigoPorId($amigo_id) {
+    $connection = getConnection();
+
+    $query = "SELECT nombre, apellidos FROM amigos WHERE id = ?";
+    $stmt = mysqli_prepare($connection, $query);
+    mysqli_stmt_bind_param($stmt, 'i', $amigo_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    $amigo = mysqli_fetch_assoc($result);
+    mysqli_stmt_close($stmt);
+    mysqli_close($connection);
+
+    return $amigo;
+}
 
 
 ?>

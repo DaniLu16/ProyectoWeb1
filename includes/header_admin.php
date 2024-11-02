@@ -23,8 +23,8 @@
     <li class="nav-item dropdown">
       <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Amigos</a>
       <div class="dropdown-menu">
-        <a class="dropdown-item" href="view_friends.php">Ver Árboles por Amigos</a>
-        <a class="dropdown-item" href="add_friend.php">Administar Árboles de Amigos< </a>
+        <a class="dropdown-item" href="/administrador/view_user.php">Ver Árboles por Amigos</a>
+        <a class="dropdown-item" href="add_friend.php">Administar Árboles de Amigos </a>
         <a class="dropdown-item" href="administrador/adm_user.php">Administar Amigos< </a>
       </div>
     </li>

@@ -18,7 +18,7 @@
       <a href="../amigo/arboles_comprados.php" class="nav-link">Mis Árboles</a>
     </li>
     <li class="nav-item">
-      <a href="amigo/arboles_dispo.php" class="nav-link">Árboles Disponibles</a>
+      <a href="../amigo/arboles_dispo.php" class="nav-link">Árboles Disponibles</a>
     </li>
     <li class="nav-item">
       <a href="signUp.php" class="nav-link">Signup</a>

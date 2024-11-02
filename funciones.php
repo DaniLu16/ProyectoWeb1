@@ -579,6 +579,28 @@ function obtenerArbolesCompradosPorAmigos() {
 
     return $result;
 }
+function obtenerArbolesCompradosPorUsuario($user_id) {
+    $connection = getConnection();
+
+    $query = "
+        SELECT ad.id, e.nombre_comercial, e.nombre_cientifico, ad.ubicacion, ad.precio, ad.imagen, c.fecha_compra
+        FROM compras AS c
+        JOIN arboles_dispo AS ad ON c.arbol_id = ad.id
+        JOIN especies AS e ON ad.especie = e.id
+        WHERE c.user_id = ?
+    ";
+
+    $stmt = mysqli_prepare($connection, $query);
+    mysqli_stmt_bind_param($stmt, 'i', $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if (!$result) {
+        die("Error al obtener árboles comprados: " . mysqli_error($connection));
+    }
+
+    return $result;
+}
 
 
 

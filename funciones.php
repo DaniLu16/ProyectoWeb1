@@ -605,6 +605,42 @@ function obtenerArbolesCompradosPorUsuario($user_id) {
     return $result;
 }
 
+function obtenerDatosArbol($id) {
+    $connection = getConnection();
+    $query = "SELECT tamano, especie, ubicacion, estado FROM arboles_dispo WHERE id = ?";
+    $stmt = mysqli_prepare($connection, $query);
+    mysqli_stmt_bind_param($stmt, 'i', $id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $arbol = mysqli_fetch_assoc($result);
+    mysqli_stmt_close($stmt);
+    mysqli_close($connection);
+    return $arbol;
+}
+
+function registrarActualizacion($arbol_id, $tamano, $estado) {
+    $connection = getConnection();
+    $query = "INSERT INTO actualizaciones_arboles (arbol_id, tamano, estado) VALUES (?, ?, ?)";
+    $stmt = mysqli_prepare($connection, $query);
+    mysqli_stmt_bind_param($stmt, 'iss', $arbol_id, $tamano, $estado);
+    $resultado = mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+    mysqli_close($connection);
+    return $resultado;
+}
+
+function obtenerHistorialArbol($arbol_id) {
+    $connection = getConnection();
+    $query = "SELECT fecha_actualizacion, tamano, estado FROM actualizaciones_arboles WHERE arbol_id = ? ORDER BY fecha_actualizacion DESC";
+    $stmt = mysqli_prepare($connection, $query);
+    mysqli_stmt_bind_param($stmt, 'i', $arbol_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    mysqli_stmt_close($stmt);
+    mysqli_close($connection);
+    return $result;
+}
+
 
 
 

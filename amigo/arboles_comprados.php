@@ -1,25 +1,31 @@
 
-<?php  
-
-require('../includes/header_amigo.php'); 
+<?php
+require('../includes/header_amigo.php');
 include('../funciones.php');
+session_start();
 
-// Cargar árboles desde la base de datos
-$result = cargarArbolesDisponibles(); // Llamar a la función que carga los árboles
+// Verificar si el usuario está autenticado
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
 
+// Obtener los árboles comprados por el usuario logueado
+$user_id = $_SESSION['user_id'];
+$result = obtenerArbolesCompradosPorUsuario($user_id);
 ?>
-<body class="signup-background2"> <!-- Cambiado a signup-background2 -->
-<div class="container mt-5">
-    <div class="form-wrapper"> 
 
-        <!-- Mostrar mensaje si está presente en la URL -->
+<body class="signup-background2">
+<div class="container mt-5">
+    <div class="form-wrapper">
+        <h2>Mis Árboles Comprados</h2>
+
         <?php if (isset($_GET['msg'])): ?>
             <div class="alert alert-success" role="alert">
                 <?php echo htmlspecialchars($_GET['msg']); ?>
             </div>
         <?php endif; ?>
 
-        <!-- Mostrar la tabla de árboles -->
         <table class="table table-striped table-bordered">
             <thead class="thead-dark">
                 <tr>
@@ -27,10 +33,9 @@ $result = cargarArbolesDisponibles(); // Llamar a la función que carga los árb
                     <th>Nombre Comercial</th>
                     <th>Nombre Científico</th>
                     <th>Ubicación</th>
-                    <th>Estado</th>
                     <th>Precio</th>
+                    <th>Fecha de Compra</th>
                     <th>Imagen</th>
-                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -40,14 +45,10 @@ $result = cargarArbolesDisponibles(); // Llamar a la función que carga los árb
                         <td><?php echo htmlspecialchars($arbol['nombre_comercial']); ?></td>
                         <td><?php echo htmlspecialchars($arbol['nombre_cientifico']); ?></td>
                         <td><?php echo htmlspecialchars($arbol['ubicacion']); ?></td>
-                        <td><?php echo htmlspecialchars($arbol['estado'] == 1 ? 'Disponible' : 'No Disponible'); ?></td>
                         <td><?php echo htmlspecialchars($arbol['precio']); ?></td>
+                        <td><?php echo htmlspecialchars($arbol['fecha_compra']); ?></td>
                         <td>
                             <img src="../arboles/<?php echo htmlspecialchars($arbol['imagen']); ?>" alt="Imagen de <?php echo htmlspecialchars($arbol['nombre_comercial']); ?>" style="width: 100px; height: auto;">
-                        </td>
-                        <td style="white-space: nowrap;">
-                        <a href="comprar_arbol.php?id=<?php echo $arbol['id']; ?>" class="btn btn-success">Comprar</a>
-
                         </td>
                     </tr>
                 <?php endwhile; ?>
@@ -55,7 +56,4 @@ $result = cargarArbolesDisponibles(); // Llamar a la función que carga los árb
         </table>
     </div>
 </div>
-
-<?php
-?>
 </body>

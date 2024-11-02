@@ -528,25 +528,49 @@ function editarEspecie($id, $nombreComercial, $nombreCientifico) {
 }
 
 function cargarArbolesDisponibles() {
-    $connection = getConnection(); // Conectar a la base de datos
+    $connection = getConnection();
 
-    // Consulta para obtener todos los árboles disponibles (estado = 1) incluyendo los datos de la especie y la imagen
+    // Consulta para obtener solo los árboles disponibles (estado = 1)
     $query = "
         SELECT ad.id, e.nombre_comercial, e.nombre_cientifico, ad.ubicacion, ad.estado, ad.precio, ad.imagen 
         FROM arboles_dispo AS ad
         JOIN especies AS e ON ad.especie = e.id
         WHERE ad.estado = 1
     ";
-    
+
     $result = mysqli_query($connection, $query);
 
-    // Verificar si la consulta fue exitosa
     if (!$result) {
         die("Error al cargar árboles: " . mysqli_error($connection));
     }
 
-    return $result; // Retornar el resultado de la consulta
+    return $result;
 }
+
+function obtenerArbolesCompradosPorUsuario($user_id) {
+    $connection = getConnection();
+
+    $query = "
+        SELECT ad.id, e.nombre_comercial, e.nombre_cientifico, ad.ubicacion, ad.precio, ad.imagen, c.fecha_compra
+        FROM compras AS c
+        JOIN arboles_dispo AS ad ON c.arbol_id = ad.id
+        JOIN especies AS e ON ad.especie = e.id
+        WHERE c.user_id = ?
+    ";
+
+    $stmt = mysqli_prepare($connection, $query);
+    mysqli_stmt_bind_param($stmt, 'i', $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if (!$result) {
+        die("Error al obtener árboles comprados: " . mysqli_error($connection));
+    }
+
+    return $result;
+}
+
+
 
 ?>
 <?php

@@ -1,14 +1,12 @@
-
 <?php  
-
 require('../includes/header_amigo.php'); 
 include('../funciones.php');
 
 // Cargar árboles desde la base de datos
 $result = cargarArbolesDisponibles(); // Llamar a la función que carga los árboles
-
 ?>
-<body class="signup-background2"> <!-- Cambiado a signup-background2 -->
+
+<body class="signup-background2">
 <div class="container mt-5">
     <div class="form-wrapper"> 
 
@@ -29,6 +27,7 @@ $result = cargarArbolesDisponibles(); // Llamar a la función que carga los árb
                     <th>Ubicación</th>
                     <th>Estado</th>
                     <th>Precio</th>
+                    <th>Tamaño</th> <!-- Nueva columna para Tamaño -->
                     <th>Imagen</th>
                     <th>Acciones</th>
                 </tr>
@@ -42,12 +41,12 @@ $result = cargarArbolesDisponibles(); // Llamar a la función que carga los árb
                         <td><?php echo htmlspecialchars($arbol['ubicacion']); ?></td>
                         <td><?php echo htmlspecialchars($arbol['estado'] == 1 ? 'Disponible' : 'No Disponible'); ?></td>
                         <td><?php echo htmlspecialchars($arbol['precio']); ?></td>
+                        <td><?php echo htmlspecialchars($arbol['tamano']); ?></td> <!-- Muestra el tamaño del árbol -->
                         <td>
                             <img src="../arboles/<?php echo htmlspecialchars($arbol['imagen']); ?>" alt="Imagen de <?php echo htmlspecialchars($arbol['nombre_comercial']); ?>" style="width: 100px; height: auto;">
                         </td>
                         <td style="white-space: nowrap;">
-                        <a href="comprar_arbol.php?id=<?php echo $arbol['id']; ?>" class="btn btn-success">Comprar</a>
-
+                            <a href="comprar_arbol.php?id=<?php echo $arbol['id']; ?>" class="btn btn-success">Comprar</a>
                         </td>
                     </tr>
                 <?php endwhile; ?>
@@ -56,6 +55,5 @@ $result = cargarArbolesDisponibles(); // Llamar a la función que carga los árb
     </div>
 </div>
 
-<?php
-?>
 </body>
+

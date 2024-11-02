@@ -34,6 +34,7 @@ $result = obtenerArbolesCompradosPorUsuario($user_id);
                     <th>Nombre Científico</th>
                     <th>Ubicación</th>
                     <th>Precio</th>
+                    <th>Tamaño</th>
                     <th>Fecha de Compra</th>
                     <th>Imagen</th>
                 </tr>
@@ -46,6 +47,7 @@ $result = obtenerArbolesCompradosPorUsuario($user_id);
                         <td><?php echo htmlspecialchars($arbol['nombre_cientifico']); ?></td>
                         <td><?php echo htmlspecialchars($arbol['ubicacion']); ?></td>
                         <td><?php echo htmlspecialchars($arbol['precio']); ?></td>
+                        <td><?php echo htmlspecialchars($arbol['tamano']); ?></td>
                         <td><?php echo htmlspecialchars($arbol['fecha_compra']); ?></td>
                         <td>
                             <img src="../arboles/<?php echo htmlspecialchars($arbol['imagen']); ?>" alt="Imagen de <?php echo htmlspecialchars($arbol['nombre_comercial']); ?>" style="width: 100px; height: auto;">

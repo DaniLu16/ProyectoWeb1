@@ -250,7 +250,7 @@ function obtenerOpciones($tipo) {
     return $opciones;
 }
 
-function registrarArbol($especieId, $ubicacion, $precio, $file) {
+function registrarArbol($especieId, $tamano, $ubicacion, $precio, $file) {
     // Verificar si el archivo fue subido correctamente
     if ($file['error'] !== UPLOAD_ERR_OK) {
         return false;
@@ -275,11 +275,11 @@ function registrarArbol($especieId, $ubicacion, $precio, $file) {
 
     // Guardar los datos en la tabla arboles_dispo con estado disponible = 1 por defecto
     $connection = getConnection();
-    $query = "INSERT INTO arboles_dispo (especie, ubicacion, estado, precio, imagen) VALUES (?, ?, 1, ?, ?)";
+    $query = "INSERT INTO arboles_dispo (especie, tamano, ubicacion, estado, precio, imagen) VALUES (?, ?, ?, 1, ?, ?)";
     $stmt = mysqli_prepare($connection, $query);
 
     if ($stmt) {
-        mysqli_stmt_bind_param($stmt, 'isds', $especieId, $ubicacion, $precio, $nombreImagen);
+        mysqli_stmt_bind_param($stmt, 'issds', $especieId, $tamano, $ubicacion, $precio, $nombreImagen);
         $resultado = mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
         mysqli_close($connection);
@@ -289,6 +289,7 @@ function registrarArbol($especieId, $ubicacion, $precio, $file) {
 
     return false; // Retornar false si hay un error
 }
+
 
 function obtenerOpcionesEspecies() {
     $connection = getConnection();
@@ -530,9 +531,9 @@ function editarEspecie($id, $nombreComercial, $nombreCientifico) {
 function cargarArbolesDisponibles() {
     $connection = getConnection();
 
-    // Consulta para obtener solo los árboles disponibles (estado = 1)
+    // Consulta para obtener solo los árboles disponibles (estado = 1), incluyendo el tamaño
     $query = "
-        SELECT ad.id, e.nombre_comercial, e.nombre_cientifico, ad.ubicacion, ad.estado, ad.precio, ad.imagen 
+        SELECT ad.id, e.nombre_comercial, e.nombre_cientifico, ad.ubicacion, ad.estado, ad.precio, ad.imagen, ad.tamano
         FROM arboles_dispo AS ad
         JOIN especies AS e ON ad.especie = e.id
         WHERE ad.estado = 1
@@ -541,11 +542,12 @@ function cargarArbolesDisponibles() {
     $result = mysqli_query($connection, $query);
 
     if (!$result) {
-        die("Error al cargar árboles: " . mysqli_error($connection));
+        die("Error al cargar árboles: " . htmlspecialchars(mysqli_error($connection)));
     }
 
     return $result;
 }
+
 
 function obtenerListaAmigos() {
     $connection = getConnection();
@@ -579,11 +581,12 @@ function obtenerArbolesCompradosPorAmigos() {
 
     return $result;
 }
+
 function obtenerArbolesCompradosPorUsuario($user_id) {
     $connection = getConnection();
 
     $query = "
-        SELECT ad.id, e.nombre_comercial, e.nombre_cientifico, ad.ubicacion, ad.precio, ad.imagen, c.fecha_compra
+        SELECT ad.id, e.nombre_comercial, e.nombre_cientifico, ad.ubicacion, ad.precio, ad.imagen, ad.tamano, c.fecha_compra
         FROM compras AS c
         JOIN arboles_dispo AS ad ON c.arbol_id = ad.id
         JOIN especies AS e ON ad.especie = e.id
@@ -601,6 +604,7 @@ function obtenerArbolesCompradosPorUsuario($user_id) {
 
     return $result;
 }
+
 
 
 

@@ -25,15 +25,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $especieId = trim($_POST['especie']);
     $ubicacion = trim($_POST['ubicacion']);
     $precio = trim($_POST['precio']);
+    $tamano = trim($_POST['tamano']);
     $imagen = $_FILES['imagen'];
 
     // Validar que los campos no estén vacíos
-    if (empty($especieId) || empty($ubicacion) || empty($precio) || $imagen['error'] !== UPLOAD_ERR_OK) {
+    if (empty($especieId) || empty($ubicacion) || empty($precio) || empty($tamano) || $imagen['error'] !== UPLOAD_ERR_OK) {
         $mensaje = "Por favor, complete todos los campos y suba una imagen válida.";
         $tipoMensaje = 'error';
     } else {
         // Llamar a la función de registro
-        if (registrarArbol($especieId, $ubicacion, $precio, $imagen)) {
+        if (registrarArbol($especieId, $tamano, $ubicacion, $precio, $imagen)) {
             // Redirigir a la misma página con mensaje de éxito
             header("Location: " . htmlspecialchars($_SERVER['PHP_SELF']) . "?msg=Árbol registrado con éxito");
             exit();
@@ -73,7 +74,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="form-group">
             <label for="precio">Precio:</label>
-            <input type="text" name="precio" id="precio" class="form-control" step="0.01" min="0" required>
+            <input type="number" name="precio" id="precio" class="form-control" step="0.01" min="0" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="tamano">Tamaño:</label>
+            <input type="text" name="tamano" id="tamano" class="form-control" required>
         </div>
 
         <div class="form-group">
@@ -86,3 +92,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div> <!-- Cierre del contenedor del formulario -->
 
 </body>
+

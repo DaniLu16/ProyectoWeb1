@@ -367,7 +367,7 @@ function cargarEspecie() {
     return $result; // Retornar el resultado de la consulta
 }
 
-function editarArbol($id, $especie, $ubicacion, $precio, $estado, $file = null) {
+function editarArbol($id, $tamano, $especie, $ubicacion, $precio, $estado, $file = null) {
     $connection = getConnection();
     if (!$connection) {
         return [
@@ -377,9 +377,9 @@ function editarArbol($id, $especie, $ubicacion, $precio, $estado, $file = null) 
     }
 
     // Ajusta la consulta con los nombres de columna correctos
-    $query = "UPDATE arboles_dispo SET especie = ?, ubicacion = ?, precio = ?, estado = ?";
-    $params = [$especie, $ubicacion, $precio, $estado];
-    $paramTypes = 'ssdi'; // s: string, d: double, i: integer
+    $query = "UPDATE arboles_dispo SET tamano = ?, especie = ?, ubicacion = ?, precio = ?, estado = ?";
+    $params = [$tamano, $especie, $ubicacion, $precio, $estado];
+    $paramTypes = 'sssdi'; // Asegúrate de que coincida con los parámetros
 
     if ($file && $file['error'] === UPLOAD_ERR_OK) {
         $directorioDestino = "../arboles/";
@@ -425,16 +425,20 @@ function editarArbol($id, $especie, $ubicacion, $precio, $estado, $file = null) 
             "message" => "Error al enlazar parámetros: " . mysqli_stmt_error($stmt)
         ];
     }
-
-    $resultado = mysqli_stmt_execute($stmt);
-    $mensaje = $resultado ? "Árbol actualizado correctamente." : "Error al ejecutar la consulta: " . mysqli_stmt_error($stmt);
+    
+    if (!mysqli_stmt_execute($stmt)) {
+        return [
+            "success" => false,
+            "message" => "Error al ejecutar la consulta: " . mysqli_stmt_error($stmt)
+        ];
+    }
 
     mysqli_stmt_close($stmt);
     mysqli_close($connection);
-
+    
     return [
-        "success" => $resultado,
-        "message" => $mensaje
+        "success" => true,
+        "message" => "Árbol actualizado correctamente."
     ];
 }
 

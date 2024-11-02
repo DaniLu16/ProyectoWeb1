@@ -49,14 +49,12 @@ $arbolesCompradosPorAmigos = obtenerArbolesCompradosPorAmigos();
                         <img src="../arboles/<?php echo htmlspecialchars($row['imagen']); ?>" alt="Imagen de <?php echo htmlspecialchars($row['nombre_comercial']); ?>" style="width: 100px; height: auto;">
                     </td>
                     <td>
-                        <a href="/administrador/eddit_friend echo $row['arbol_id']; ?>" class="btn btn-primary btn-sm">Editar</a>
+                        <a href="/administrador/eddit_friend.php?id=<?php echo $row['arbol_id']; ?>" class="btn btn-primary btn-sm">Editar</a> 
                         <a href="eliminar_arbol.php?id=<?php echo $row['arbol_id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Está seguro de que desea eliminar este árbol?');">Eliminar</a>
                     </td>
                 </tr>
             <?php endwhile; ?>
         </tbody>
     </table>
-
-    <a href="/administrador/adm_lista.php" class="btn btn-secondary">Volver a la lista de amigos</a>
 </div>
 </body>

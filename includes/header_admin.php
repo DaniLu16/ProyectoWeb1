@@ -5,7 +5,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="../includes/style.css">
+  <link rel="stylesheet" href="includes/style.css">
 
 </head>
 <body>
@@ -36,7 +36,9 @@
         <a class="dropdown-item" href="administrador/adm_trees.php">Administrar Árboles </a>
       </div>
     </li>
-    
+    <li class="nav-item">
+      <a href="administrador/dashboard.php" class="nav-link">Dashboard</a>
+    </li>
     <li class="nav-item">
       <a href="signUp.php" class="nav-link">Signup</a>
     </li>

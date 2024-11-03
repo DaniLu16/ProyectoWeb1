@@ -644,10 +644,28 @@ function obtenerHistorialArbol($arbol_id) {
     mysqli_close($connection);
     return $result;
 }
+function contarAmigosRegistrados() {
+    $connection = getConnection();
 
+    // Consulta para contar la cantidad de amigos registrados
+    $query = "SELECT COUNT(*) AS total_amigos FROM amigos WHERE rol_id = 2"; // 2 representa el rol de 'amigo'
+    $result = mysqli_query($connection, $query);
 
+    if ($result) {
+        $row = mysqli_fetch_assoc($result);
+        $total_amigos = $row['total_amigos'];
+        return $total_amigos;
+    } else {
+        return "Error al contar los amigos registrados: " . mysqli_error($connection);
+    }
 
+    mysqli_close($connection);
+}
+
+// Obtener la cantidad de amigos registrados
+$cantidad_amigos = contarAmigosRegistrados();
 
 
 ?>
+
 <?php

@@ -1,16 +1,16 @@
-<?php  
+<?php
 require('../includes/header_admin.php'); 
 include('../funciones.php');
 
-// Cargar árboles desde la base de datos
-$result = cargarArboles(); // Llamar a la función que carga los árboles
+// Cargar árboles disponibles
+$result = cargarArbolesDisponibles();
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Administración de Árboles</title>
+    <title>Administración de Árboles Disponibles</title>
 </head>
 <body class="signup-background2">
 <div class="container mt-5">
@@ -23,7 +23,7 @@ $result = cargarArboles(); // Llamar a la función que carga los árboles
             </div>
         <?php endif; ?>
 
-        <!-- Mostrar la tabla de árboles -->
+        <!-- Mostrar la tabla de árboles disponibles -->
         <table class="table table-striped table-bordered">
             <thead class="thead-dark">
                 <tr>
@@ -33,6 +33,7 @@ $result = cargarArboles(); // Llamar a la función que carga los árboles
                     <th>Ubicación</th>
                     <th>Estado</th>
                     <th>Precio</th>
+                    <th>Tamaño</th>
                     <th>Imagen</th>
                     <th>Acciones</th>
                 </tr>
@@ -46,6 +47,7 @@ $result = cargarArboles(); // Llamar a la función que carga los árboles
                         <td><?php echo htmlspecialchars($arbol['ubicacion']); ?></td>
                         <td><?php echo htmlspecialchars($arbol['estado'] == 1 ? 'Disponible' : 'No Disponible'); ?></td>
                         <td><?php echo htmlspecialchars($arbol['precio']); ?></td>
+                        <td><?php echo htmlspecialchars($arbol['tamano']); ?></td>
                         <td>
                             <img src="../arboles/<?php echo htmlspecialchars($arbol['imagen']); ?>" alt="Imagen del árbol" style="width: 100px; height: auto;">
                         </td>
@@ -53,7 +55,7 @@ $result = cargarArboles(); // Llamar a la función que carga los árboles
                             <a href="../administrador/eddit_tree.php?id=<?php echo htmlspecialchars($arbol['id']); ?>" class="action-btn edit-btn">
                                Editar
                             </a>
-                            <a href="/administrador/delete_tree.php?id=<?php echo htmlspecialchars($arbol['id']); ?>" class="action-btn delete-btn">
+                            <a href="../administrador/delete_tree.php?id=<?php echo htmlspecialchars($arbol['id']); ?>" class="action-btn delete-btn">
                                Eliminar
                             </a>
                         </td>

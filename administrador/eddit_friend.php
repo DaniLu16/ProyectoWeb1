@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $resultado = editarArbol($id, $tamano, $especie, $ubicacion, $precio, $estado, $file);
     if ($resultado['success']) {
         registrarActualizacion($id, $tamano, $estado); // Registrar la actualización
-        header("Location: adm_trees.php?msg=" . urlencode("Árbol actualizado exitosamente."));
+        header("Location: adm_friends.php?msg=" . urlencode("Árbol actualizado exitosamente."));
         exit();
     } else {
         echo "Error al actualizar el árbol: " . htmlspecialchars($resultado['message']);

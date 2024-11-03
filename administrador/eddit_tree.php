@@ -6,22 +6,23 @@ require('../includes/header_admin.php');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-
 // Inicializar la variable de error
 $error = '';
 
 // Verificar si se ha enviado el formulario con el método POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = $_POST['id'];
+    $especieId = $_POST['especie']; // Asegúrate de que estás enviando el id de especie también
     $nombreComercial = $_POST['nombre_comercial'];
     $nombreCientifico = $_POST['nombre_cientifico'];
     $ubicacion = $_POST['ubicacion'];
     $precio = $_POST['precio'];
     $estado = $_POST['estado'];
+    $tamano = $_POST['tamano']; // Añadido campo para tamaño
     $file = $_FILES['imagen'];
 
     // Llamar a la función para editar el árbol
-    $resultado = editarArbol($id, $nombreComercial, $nombreCientifico, $ubicacion, $precio, $estado, $file);
+    $resultado = editarArbol2($id, $especieId, $nombreComercial, $nombreCientifico, $ubicacion, $precio, $estado, $tamano, $file);
 
     if ($resultado['success']) {
         header("Location: adm_trees.php?msg=" . urlencode($resultado['message']));
@@ -77,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
     <?php endif; ?>
 
-    <form action="administrador/eddit_tree.php" method="POST" enctype="multipart/form-data">
+    <form action="eddit_tree.php" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="id" value="<?php echo isset($arbol['id']) ? htmlspecialchars($arbol['id']) : ''; ?>">
 
         <div class="form-group">
@@ -93,6 +94,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="form-group">
             <label for="ubicacion">Ubicación:</label>
             <input type="text" name="ubicacion" value="<?php echo isset($arbol['ubicacion']) ? htmlspecialchars($arbol['ubicacion']) : ''; ?>" required>
+        </div>
+
+        <div class="form-group">
+            <label for="tamano">Tamaño:</label>
+            <input type="text" name="tamano" value="<?php echo isset($arbol['tamano']) ? htmlspecialchars($arbol['tamano']) : ''; ?>" required>
         </div>
 
         <div class="form-group">

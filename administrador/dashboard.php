@@ -5,6 +5,9 @@ include('../funciones.php');
 
 // Obtener la cantidad de amigos registrados usando la función contarAmigosRegistrados
 $cantidad_amigos = contarAmigosRegistrados();
+
+// Obtener la cantidad de árboles disponibles usando la función contarArbolesDisponibles
+$cantidad_arboles_disponibles = contarArbolesDisponibles();
 ?>
 
 <!DOCTYPE html>
@@ -20,6 +23,9 @@ $cantidad_amigos = contarAmigosRegistrados();
     
     <!-- Mostrar la cantidad de amigos registrados -->
     <p>Cantidad de amigos registrados: <?php echo is_numeric($cantidad_amigos) ? $cantidad_amigos : $cantidad_amigos; ?></p>
+    
+    <!-- Mostrar la cantidad de árboles disponibles -->
+    <p>Cantidad de árboles disponibles: <?php echo is_numeric($cantidad_arboles_disponibles) ? $cantidad_arboles_disponibles : $cantidad_arboles_disponibles; ?></p>
 
 </body>
 </html>

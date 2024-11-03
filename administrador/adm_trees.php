@@ -28,6 +28,7 @@ $result = cargarArbolesDisponibles();
             <thead class="thead-dark">
                 <tr>
                     <th>ID</th>
+                    <th>ID Especie</th> 
                     <th>Nombre Comercial</th>
                     <th>Nombre Científico</th>
                     <th>Ubicación</th>
@@ -42,6 +43,7 @@ $result = cargarArbolesDisponibles();
                 <?php while ($arbol = mysqli_fetch_assoc($result)): ?>
                     <tr>
                         <td><?php echo htmlspecialchars($arbol['id']); ?></td>
+                        <td><?php echo htmlspecialchars($arbol['especie']); ?></td>
                         <td><?php echo htmlspecialchars($arbol['nombre_comercial']); ?></td>
                         <td><?php echo htmlspecialchars($arbol['nombre_cientifico']); ?></td>
                         <td><?php echo htmlspecialchars($arbol['ubicacion']); ?></td>

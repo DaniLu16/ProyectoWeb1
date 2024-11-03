@@ -1,4 +1,4 @@
-<body class="signup-background2">
+<body class="signup-background2"> 
 <?php
 include('../funciones.php');
 require('../includes/header_admin.php');
@@ -10,15 +10,15 @@ ini_set('display_errors', 1);
 $error = '';
 
 // Verificar si se ha enviado el formulario con el método POST
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = $_POST['id'];
-    $especieId = $_POST['especie']; // Asegúrate de que estás enviando el id de especie también
+    $especieId = $_POST['especie']; // Agregando la especie
     $nombreComercial = $_POST['nombre_comercial'];
     $nombreCientifico = $_POST['nombre_cientifico'];
     $ubicacion = $_POST['ubicacion'];
     $precio = $_POST['precio'];
     $estado = $_POST['estado'];
-    $tamano = $_POST['tamano']; // Añadido campo para tamaño
+    $tamano = $_POST['tamano'];
     $file = $_FILES['imagen'];
 
     // Llamar a la función para editar el árbol
@@ -39,11 +39,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("Error de conexión: " . mysqli_connect_error());
     }
 
+  // Obtener los datos del árbol desde la base de datos
     $query = "
-        SELECT ad.*, e.nombre_comercial, e.nombre_cientifico
-        FROM arboles_dispo AS ad
-        JOIN especies AS e ON ad.especie = e.id
-        WHERE ad.id = ?
+    SELECT ad.*, e.id AS especie_id, e.nombre_comercial, e.nombre_cientifico
+    FROM arboles_dispo AS ad
+    JOIN especies AS e ON ad.especie = e.id
+    WHERE ad.id = ?
     ";
 
     $stmt = mysqli_prepare($connection, $query);
@@ -69,6 +70,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo "ID no especificado.";
     exit;
 }
+
+// Obtener las especies disponibles
+$opcionesEspecie = obtenerOpcionesEspecies(); 
 ?>
 
 <div class="form-container">
@@ -80,6 +84,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <form action="eddit_tree.php" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="id" value="<?php echo isset($arbol['id']) ? htmlspecialchars($arbol['id']) : ''; ?>">
+
+        <div class="form-group">
+            <label for="especie">Especie:</label>
+            <select name="especie" id="especie" required>
+                <option value="">Seleccione una especie</option>
+                <?php foreach ($opcionesEspecie as $opcion): ?>
+                    <option value="<?= htmlspecialchars($opcion['id']) ?>" <?php echo isset($arbol['especie']) && $arbol['especie'] == $opcion['id'] ? 'selected' : ''; ?>>
+                        <?= htmlspecialchars($opcion['nombre_comercial'] . " (" . $opcion['nombre_cientifico'] . ")") ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
 
         <div class="form-group">
             <label for="nombre_comercial">Nombre Comercial:</label>
@@ -115,14 +131,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <div class="form-group">
-            <label for="imagen">Imagen:</label>
-            <input type="file" name="imagen">
-            <?php if (isset($arbol['imagen']) && !empty($arbol['imagen'])): ?>
-                <p>Imagen actual: <img src="../arboles/<?php echo htmlspecialchars($arbol['imagen']); ?>" alt="Imagen del árbol" style="width: 100px; height: auto;"></p>
-            <?php endif; ?>
+            <label for="imagen">Imagen (opcional):</label>
+            <input type="file" name="imagen" class="form-control">
         </div>
 
         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
     </form>
 </div>
 </body>
+

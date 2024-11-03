@@ -484,8 +484,6 @@ function eliminarArbol($id) {
 function eliminarEspecie($id) {
     $connection = getConnection();
 
-
-
     // Eliminar el registro de la base de datos
     $query = "DELETE FROM especies WHERE id = ?";
     $stmt = mysqli_prepare($connection, $query);
@@ -535,9 +533,9 @@ function editarEspecie($id, $nombreComercial, $nombreCientifico) {
 function cargarArbolesDisponibles() {
     $connection = getConnection();
 
-    // Consulta para obtener solo los árboles disponibles (estado = 1), incluyendo el tamaño
+    // Consulta para obtener solo los árboles disponibles (estado = 1), incluyendo el tamaño y el ID de la especie
     $query = "
-        SELECT ad.id, e.nombre_comercial, e.nombre_cientifico, ad.ubicacion, ad.estado, ad.precio, ad.imagen, ad.tamano
+        SELECT ad.id, ad.especie, e.nombre_comercial, e.nombre_cientifico, ad.ubicacion, ad.estado, ad.precio, ad.imagen, ad.tamano
         FROM arboles_dispo AS ad
         JOIN especies AS e ON ad.especie = e.id
         WHERE ad.estado = 1
@@ -554,7 +552,6 @@ function cargarArbolesDisponibles() {
     // Devolver el resultado
     return $result;
 }
-
 
 
 function obtenerListaAmigos() {
@@ -683,20 +680,19 @@ function editarArbol2($id, $especieId, $nombreComercial, $nombreCientifico, $ubi
     mysqli_begin_transaction($connection);
 
     try {
-        // Primero actualizamos la especie
+        // Actualizar la especie en la tabla especies (si es necesario)
         $queryEspecie = "UPDATE especies SET nombre_comercial = ?, nombre_cientifico = ? WHERE id = ?";
         $stmtEspecie = mysqli_prepare($connection, $queryEspecie);
         mysqli_stmt_bind_param($stmtEspecie, 'ssi', $nombreComercial, $nombreCientifico, $especieId);
         mysqli_stmt_execute($stmtEspecie);
 
-        // Ahora actualizamos el árbol
+        // Ahora actualizamos el árbol (incluyendo el campo `especie`)
         $queryArbol = "UPDATE arboles_dispo SET especie = ?, ubicacion = ?, precio = ?, estado = ?, tamano = ?, imagen = ? WHERE id = ?";
         $stmtArbol = mysqli_prepare($connection, $queryArbol);
 
         // Manejo de la imagen
         $imageName = '';
         if (!empty($file['name'])) {
-            // Generar un nombre único para la imagen
             $imageName = uniqid() . '_' . basename($file['name']);
             $targetFilePath = '../arboles/' . $imageName;
 
@@ -704,7 +700,6 @@ function editarArbol2($id, $especieId, $nombreComercial, $nombreCientifico, $ubi
                 throw new Exception('Error al subir la imagen.');
             }
         } else {
-            // Si no se proporciona una nueva imagen, obtenemos la imagen actual
             $currentQuery = "SELECT imagen FROM arboles_dispo WHERE id = ?";
             $currentStmt = mysqli_prepare($connection, $currentQuery);
             mysqli_stmt_bind_param($currentStmt, 'i', $id);
@@ -715,8 +710,8 @@ function editarArbol2($id, $especieId, $nombreComercial, $nombreCientifico, $ubi
             mysqli_stmt_close($currentStmt);
         }
 
-        // Asegúrate de cambiar el orden de los parámetros al llamar a bind_param
-        mysqli_stmt_bind_param($stmtArbol, 'ssdssis', $especieId, $ubicacion, $precio, $estado, $tamano, $imageName, $id);
+        // Vincular parámetros a la consulta
+        mysqli_stmt_bind_param($stmtArbol, 'isdssis', $especieId, $ubicacion, $precio, $estado, $tamano, $imageName, $id);
         $executeResult = mysqli_stmt_execute($stmtArbol);
 
         if ($executeResult) {
@@ -742,8 +737,6 @@ function editarArbol2($id, $especieId, $nombreComercial, $nombreCientifico, $ubi
         mysqli_close($connection);
     }
 }
-
-
 
 ?>
 

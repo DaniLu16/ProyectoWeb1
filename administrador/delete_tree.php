@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol_id'] != 1) {
 
 // Obtener el ID del árbol
 if (!isset($_GET['id'])) {
-    header("Location: adm_friends.php?msg=" . urlencode("ID de árbol no proporcionado."));
+    header("Location: adm_trees.php?msg=" . urlencode("ID de árbol no proporcionado."));
     exit();
 }
 
@@ -19,7 +19,7 @@ $id = $_GET['id'];
 
 // Manejar la solicitud de eliminación
 if (eliminarArbol($id)) {
-    header("Location: adm_friends.php?msg=" . urlencode("Árbol eliminado exitosamente."));
+    header("Location: adm_trees.php?msg=" . urlencode("Árbol eliminado exitosamente."));
     exit();
 } else {
     echo "Error al eliminar el árbol.";

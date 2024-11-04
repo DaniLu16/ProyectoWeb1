@@ -466,3 +466,65 @@ body {
     text-align: center; /* Centrar el texto */
     font-weight: bold; /* Texto en negrita */
 }
+
+/* Contenedor principal */
+.dashboard-main-container {
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.8); /* Fondo semi-transparente */
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    max-width: 800px;
+    width: 90%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Título del dashboard */
+.dashboard-title {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color:  #155724;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    font-weight: bold;
+}
+
+/* Contenedor de estadísticas */
+.dashboard-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+/* Tarjetas de estadísticas */
+.stat-card {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    flex: 1 1 200px;
+    max-width: 250px;
+    text-align: center;
+    transition: transform 0.2s;
+    color: #333;
+}
+
+.stat-card:hover {
+    transform: scale(1.05);
+}
+
+/* Título y valor de estadísticas */
+.stat-title {
+    font-size: 1.2em;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.stat-value {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #333;
+}

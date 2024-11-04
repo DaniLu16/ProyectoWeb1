@@ -673,6 +673,25 @@ function contarArbolesDisponibles() {
     mysqli_close($connection);
 }
 
+
+function contarArbolesVendidos() {
+    $connection = getConnection();
+
+    // Consulta para contar la cantidad de árboles vendidos
+    $query = "SELECT COUNT(*) AS total_vendidos FROM compras";
+    $result = mysqli_query($connection, $query);
+
+    if ($result) {
+        $row = mysqli_fetch_assoc($result);
+        $total_vendidos = $row['total_vendidos'];
+        return $total_vendidos;
+    } else {
+        return "Error al contar los árboles vendidos: " . mysqli_error($connection);
+    }
+
+    mysqli_close($connection);
+}
+
 function editarArbol2($id, $especieId, $nombreComercial, $nombreCientifico, $ubicacion, $precio, $estado, $tamano, $file) {
     $connection = getConnection();
 

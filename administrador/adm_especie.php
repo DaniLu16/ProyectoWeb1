@@ -1,5 +1,5 @@
 <?php  
-require('../includes/header_us.php'); 
+require('../includes/header_admin.php'); 
 include('../funciones.php');
 
 // Agregar la clase al body después de cargar el header

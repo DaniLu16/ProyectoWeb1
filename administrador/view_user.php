@@ -9,13 +9,19 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol_id'] != 1) {
     exit();
 }
 
-// Obtener todos los árboles comprados por todos los amigos
-$arbolesCompradosPorAmigos = obtenerArbolesCompradosPorAmigos();
+// Verificar si se pasó el ID del amigo en la URL
+if (!isset($_GET['id'])) {
+    header("Location: adm_lista.php");
+    exit();
+}
+
+$amigoId = intval($_GET['id']); // Obtener y sanitizar el ID del amigo
+$arbolesCompradosPorAmigo = obtenerArbolesCompradosPorAmigo($amigoId);
 ?>
 
-<body class="signup-background2"> <!-- Añadido la clase aquí -->
+<body class="signup-background2">
 <div class="container mt-5">
-    <h2>Árboles Comprados por Amigos</h2>
+    <h2>Árboles Comprados por el Amigo</h2>
 
     <table class="table table-striped table-bordered">
         <thead class="thead-dark">
@@ -33,7 +39,7 @@ $arbolesCompradosPorAmigos = obtenerArbolesCompradosPorAmigos();
             </tr>
         </thead>
         <tbody>
-            <?php while ($row = mysqli_fetch_assoc($arbolesCompradosPorAmigos)): ?>
+            <?php while ($row = mysqli_fetch_assoc($arbolesCompradosPorAmigo)): ?>
                 <tr>
                     <td><?php echo htmlspecialchars($row['amigo_id']); ?></td>
                     <td><?php echo htmlspecialchars($row['nombre']); ?></td>

@@ -567,7 +567,31 @@ function obtenerListaAmigos() {
     return $result;
 }
 
-function obtenerArbolesCompradosPorAmigos() {
+function obtenerArbolesCompradosPorAmigo($amigoId) {
+    $connection = getConnection();
+
+    $query = "
+        SELECT a.id AS amigo_id, a.nombre, a.apellidos, ad.id AS arbol_id, e.nombre_comercial, e.nombre_cientifico, ad.ubicacion, ad.precio, ad.imagen, c.fecha_compra
+        FROM compras AS c
+        JOIN arboles_dispo AS ad ON c.arbol_id = ad.id
+        JOIN especies AS e ON ad.especie = e.id
+        JOIN amigos AS a ON c.user_id = a.id
+        WHERE a.id = ?
+    ";
+
+    $stmt = mysqli_prepare($connection, $query);
+    mysqli_stmt_bind_param($stmt, 'i', $amigoId);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if (!$result) {
+        die("Error al obtener árboles comprados por el amigo: " . mysqli_error($connection));
+    }
+
+    return $result;
+}
+/*editar los arboles de amigo*/
+function obtenerTodosLosArbolesCompradosPorAmigos() {
     $connection = getConnection();
 
     $query = "
@@ -581,11 +605,13 @@ function obtenerArbolesCompradosPorAmigos() {
     $result = mysqli_query($connection, $query);
 
     if (!$result) {
-        die("Error al obtener árboles comprados por amigos: " . mysqli_error($connection));
+        die("Error al obtener todos los árboles comprados por amigos: " . mysqli_error($connection));
     }
 
     return $result;
 }
+
+
 
 function obtenerArbolesCompradosPorUsuario($user_id) {
     $connection = getConnection();
@@ -612,7 +638,7 @@ function obtenerArbolesCompradosPorUsuario($user_id) {
 
 function obtenerDatosArbol($id) {
     $connection = getConnection();
-    $query = "SELECT tamano, especie, ubicacion, estado FROM arboles_dispo WHERE id = ?";
+    $query = "SELECT tamano, especie,precio, ubicacion, estado FROM arboles_dispo WHERE id = ?";
     $stmt = mysqli_prepare($connection, $query);
     mysqli_stmt_bind_param($stmt, 'i', $id);
     mysqli_stmt_execute($stmt);
@@ -713,7 +739,7 @@ function editarArbol2($id, $especieId, $nombreComercial, $nombreCientifico, $ubi
         $imageName = '';
         if (!empty($file['name'])) {
             $imageName = uniqid() . '_' . basename($file['name']);
-            $targetFilePath = '../arboles/' . $imageName;
+            $targetFilePath = '../arboles' . $imageName;
 
             if (!move_uploaded_file($file['tmp_name'], $targetFilePath)) {
                 throw new Exception('Error al subir la imagen.');

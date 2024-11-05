@@ -10,7 +10,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol_id'] != 1) {
 }
 
 // Obtener todos los árboles comprados por todos los amigos
-$arbolesCompradosPorAmigos = obtenerArbolesCompradosPorAmigos();
+$arbolesCompradosPorAmigos = obtenerTodosLosArbolesCompradosPorAmigos();
+
 ?>
 
 <body class="signup-background2"> <!-- Añadido la clase aquí -->

@@ -1,6 +1,8 @@
+<body class="signup-background2">
 <?php
+
 include('../funciones.php');
-require('../includes/header_us.php');
+require('../includes/header_admin.php'); 
 
 // Inicializar la variable de error
 $error = '';
@@ -69,5 +71,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <button type="submit" class="btn btn-primary">Guardar Especie</button>
     </form>
-</div>   
+</div>  
+</body> 
 

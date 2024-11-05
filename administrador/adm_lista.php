@@ -14,7 +14,7 @@ $amigos = obtenerListaAmigos();
 
 <body class="signup-background2"> <!-- Añadido la clase aquí -->
 <div class="container mt-5">
-    <h2>Lista de Amigos</h2>
+   
     <table class="table table-striped table-bordered">
         <thead class="thead-dark">
             <tr>

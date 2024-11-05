@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $precio = $_POST['precio'];
     $estado = $_POST['estado'];
     $tamano = $_POST['tamano'];
-    $file = $_FILES['imagen'];
+    $file = $_FILES['imagen'] ?? null;
 
     // Llamar a la función para editar el árbol
     $resultado = editarArbol2($id, $especieId, $nombreComercial, $nombreCientifico, $ubicacion, $precio, $estado, $tamano, $file);

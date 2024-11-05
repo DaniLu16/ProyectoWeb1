@@ -14,7 +14,7 @@ $result = cargarArbolesDisponibles();
 </head>
 <body class="signup-background2">
 <div class="container mt-5">
-    <div class="form-wrapper"> 
+    
 
         <!-- Mostrar mensaje si está presente en la URL -->
         <?php if (isset($_GET['msg'])): ?>
@@ -65,7 +65,7 @@ $result = cargarArbolesDisponibles();
                 <?php endwhile; ?>
             </tbody>
         </table>
-    </div>
+  
 </div>
 </body>
 </html>

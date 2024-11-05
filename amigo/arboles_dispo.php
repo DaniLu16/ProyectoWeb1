@@ -8,7 +8,7 @@ $result = cargarArbolesDisponibles(); // Llamar a la función que carga los árb
 
 <body class="signup-background2">
 <div class="container mt-5">
-    <div class="form-wrapper"> 
+  
 
         <!-- Mostrar mensaje si está presente en la URL -->
         <?php if (isset($_GET['msg'])): ?>
@@ -52,7 +52,7 @@ $result = cargarArbolesDisponibles(); // Llamar a la función que carga los árb
                 <?php endwhile; ?>
             </tbody>
         </table>
-    </div>
+   
 </div>
 
 </body>

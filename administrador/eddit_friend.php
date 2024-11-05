@@ -47,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body class="signup-background2">
 <div class="container mt-5">
+    <div class="form-wrapper">
     <h2>Editar Árbol</h2>
     <form method="POST" enctype="multipart/form-data">
         <div class="form-group">
@@ -63,8 +64,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
         <div class="form-group">
             <label for="precio">Precio:</label>
-            <input type="number" step="0.01" name="precio" class="form-control" value="<?php echo htmlspecialchars($arbol['precio']); ?>" required>
+            <input type="number" name="precio" step="0.01" value="<?php echo isset($arbol['precio']) ? htmlspecialchars($arbol['precio']) : ''; ?>" required>
         </div>
+
         <div class="form-group">
             <label for="estado">Estado:</label>
             <select name="estado" class="form-control" required>
@@ -78,6 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
     </form>
+    </div>
 </div>
 </body>
 </html>

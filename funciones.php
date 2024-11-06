@@ -441,6 +441,78 @@ function editarArbol($id, $tamano, $especie, $ubicacion, $precio, $estado, $file
         "message" => "Árbol actualizado correctamente."
     ];
 }
+/*editar arbol del amigo */
+function editarArbol2($id, $especieId, $nombreComercial, $nombreCientifico, $ubicacion, $precio, $estado, $tamano, $file = null) {
+    $connection = getConnection();
+
+    // Iniciar una transacción
+    mysqli_begin_transaction($connection);
+
+    try {
+        // Actualizar la especie en la tabla especies (si es necesario)
+        $queryEspecie = "UPDATE especies SET nombre_comercial = ?, nombre_cientifico = ? WHERE id = ?";
+        $stmtEspecie = mysqli_prepare($connection, $queryEspecie);
+        mysqli_stmt_bind_param($stmtEspecie, 'ssi', $nombreComercial, $nombreCientifico, $especieId);
+        mysqli_stmt_execute($stmtEspecie);
+
+        // Manejo de la imagen
+        $imageName = '';
+        if ($file && $file['error'] === UPLOAD_ERR_OK) {
+            $directorioDestino = "../arboles/";
+            if (!is_dir($directorioDestino)) {
+                mkdir($directorioDestino, 0777, true);
+            }
+
+            $imageName = uniqid() . "-" . basename($file['name']);
+            $targetFilePath = $directorioDestino . $imageName;
+
+            if (!move_uploaded_file($file['tmp_name'], $targetFilePath)) {
+                throw new Exception('Error al subir la imagen.');
+            }
+        } else {
+            // Obtener la imagen actual si no se sube una nueva
+            $currentQuery = "SELECT imagen FROM arboles_dispo WHERE id = ?";
+            $currentStmt = mysqli_prepare($connection, $currentQuery);
+            mysqli_stmt_bind_param($currentStmt, 'i', $id);
+            mysqli_stmt_execute($currentStmt);
+            $currentResult = mysqli_stmt_get_result($currentStmt);
+            $currentRow = mysqli_fetch_assoc($currentResult);
+            $imageName = $currentRow['imagen'];
+            mysqli_stmt_close($currentStmt);
+        }
+
+        // Ahora actualizamos el árbol (incluyendo el campo `especie` y `imagen`)
+        $queryArbol = "UPDATE arboles_dispo SET especie = ?, ubicacion = ?, precio = ?, estado = ?, tamano = ?, imagen = ? WHERE id = ?";
+        $stmtArbol = mysqli_prepare($connection, $queryArbol);
+
+        // Vincular parámetros a la consulta
+        mysqli_stmt_bind_param($stmtArbol, 'isdssis', $especieId, $ubicacion, $precio, $estado, $tamano, $imageName, $id);
+        $executeResult = mysqli_stmt_execute($stmtArbol);
+
+        if ($executeResult) {
+            // Confirmar la transacción
+            mysqli_commit($connection);
+            return ['success' => true, 'message' => 'Árbol actualizado exitosamente.'];
+        } else {
+            throw new Exception(mysqli_error($connection));
+        }
+
+    } catch (Exception $e) {
+        // Revertir la transacción en caso de error
+        mysqli_rollback($connection);
+        return ['success' => false, 'message' => $e->getMessage()];
+    } finally {
+        // Cerrar las conexiones preparadas
+        if (isset($stmtEspecie)) {
+            mysqli_stmt_close($stmtEspecie);
+        }
+        if (isset($stmtArbol)) {
+            mysqli_stmt_close($stmtArbol);
+        }
+        mysqli_close($connection);
+    }
+}
+
 
 
 function eliminarArbol($id) {
@@ -716,71 +788,6 @@ function contarArbolesVendidos() {
     }
 
     mysqli_close($connection);
-}
-
-function editarArbol2($id, $especieId, $nombreComercial, $nombreCientifico, $ubicacion, $precio, $estado, $tamano, $file) {
-    $connection = getConnection();
-
-    // Iniciar una transacción
-    mysqli_begin_transaction($connection);
-
-    try {
-        // Actualizar la especie en la tabla especies (si es necesario)
-        $queryEspecie = "UPDATE especies SET nombre_comercial = ?, nombre_cientifico = ? WHERE id = ?";
-        $stmtEspecie = mysqli_prepare($connection, $queryEspecie);
-        mysqli_stmt_bind_param($stmtEspecie, 'ssi', $nombreComercial, $nombreCientifico, $especieId);
-        mysqli_stmt_execute($stmtEspecie);
-
-        // Ahora actualizamos el árbol (incluyendo el campo `especie`)
-        $queryArbol = "UPDATE arboles_dispo SET especie = ?, ubicacion = ?, precio = ?, estado = ?, tamano = ?, imagen = ? WHERE id = ?";
-        $stmtArbol = mysqli_prepare($connection, $queryArbol);
-
-        // Manejo de la imagen
-        $imageName = '';
-        if (!empty($file['name'])) {
-            $imageName = uniqid() . '_' . basename($file['name']);
-            $targetFilePath = '../arboles' . $imageName;
-
-            if (!move_uploaded_file($file['tmp_name'], $targetFilePath)) {
-                throw new Exception('Error al subir la imagen.');
-            }
-        } else {
-            $currentQuery = "SELECT imagen FROM arboles_dispo WHERE id = ?";
-            $currentStmt = mysqli_prepare($connection, $currentQuery);
-            mysqli_stmt_bind_param($currentStmt, 'i', $id);
-            mysqli_stmt_execute($currentStmt);
-            $currentResult = mysqli_stmt_get_result($currentStmt);
-            $currentRow = mysqli_fetch_assoc($currentResult);
-            $imageName = $currentRow['imagen'];
-            mysqli_stmt_close($currentStmt);
-        }
-
-        // Vincular parámetros a la consulta
-        mysqli_stmt_bind_param($stmtArbol, 'isdssis', $especieId, $ubicacion, $precio, $estado, $tamano, $imageName, $id);
-        $executeResult = mysqli_stmt_execute($stmtArbol);
-
-        if ($executeResult) {
-            // Confirmar la transacción
-            mysqli_commit($connection);
-            return ['success' => true, 'message' => 'Árbol actualizado exitosamente.'];
-        } else {
-            throw new Exception(mysqli_error($connection));
-        }
-
-    } catch (Exception $e) {
-        // Revertir la transacción en caso de error
-        mysqli_rollback($connection);
-        return ['success' => false, 'message' => $e->getMessage()];
-    } finally {
-        // Cerrar las conexiones preparadas
-        if (isset($stmtEspecie)) {
-            mysqli_stmt_close($stmtEspecie);
-        }
-        if (isset($stmtArbol)) {
-            mysqli_stmt_close($stmtArbol);
-        }
-        mysqli_close($connection);
-    }
 }
 
 ?>

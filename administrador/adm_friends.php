@@ -16,7 +16,6 @@ $arbolesCompradosPorAmigos = obtenerTodosLosArbolesCompradosPorAmigos();
 
 <body class="signup-background2"> <!-- Añadido la clase aquí -->
 <div class="container mt-5">
-    <h2>Árboles Comprados por Amigos</h2>
 
     <table class="table table-striped table-bordered">
         <thead class="thead-dark">
@@ -50,8 +49,8 @@ $arbolesCompradosPorAmigos = obtenerTodosLosArbolesCompradosPorAmigos();
                         <img src="../arboles/<?php echo htmlspecialchars($row['imagen']); ?>" alt="Imagen de <?php echo htmlspecialchars($row['nombre_comercial']); ?>" style="width: 100px; height: auto;">
                     </td>
                     <td>
-                        <a href="../administrador/eddit_friend.php?id=<?php echo $row['arbol_id']; ?>" class="btn btn-primary btn-sm">Editar</a> 
-                        <a href="administrador/delete_friend.php?id=<?php echo $row['arbol_id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Está seguro de que desea eliminar este árbol?');">Eliminar</a>
+                        <a href="../administrador/eddit_friend.php?id=<?php echo $row['arbol_id']; ?>" class="btn btn-primary btn-sm">Editar</a> <br/>
+                        <br/><a href="administrador/delete_friend.php?id=<?php echo $row['arbol_id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Está seguro de que desea eliminar este árbol?');">Eliminar</a><br/>
                     </td>
                 </tr>
             <?php endwhile; ?>
